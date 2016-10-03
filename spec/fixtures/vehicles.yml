@@ -1,0 +1,17 @@
+Miata:
+  id: 1
+  type: Car
+  make: Mazda
+  model: Miata MX5
+  drive_layout: Front Engine RWD
+  serial_number: 32432adfsfdysua
+  person_id: 1
+
+Launch20:
+  id: 2
+  type: Boat
+  make: Chris-Craft
+  model: Launch 20
+  length_at_water_line: 15.5ft
+  serial_number: 434253JJJSD
+  person_id: 1

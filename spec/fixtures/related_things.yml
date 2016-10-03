@@ -1,0 +1,9 @@
+related_thing_1:
+  id: 1
+  from_id: 1
+  to_id: 2
+
+related_thing_2:
+  id: 2
+  from_id: 2
+  to_id: 1

@@ -1,0 +1,47 @@
+saturn:
+  id: 1
+  name: Satern
+  description: Saturn is the sixth planet from the Sun and the second largest planet in the Solar System, after Jupiter.
+  planet_type_id: 2
+
+makemake:
+  id: 2
+  name: Makemake
+  description: A small planetoid in the Kuiperbelt.
+  planet_type_id: 2
+
+uranus:
+  id: 3
+  name: Uranus
+  description: Insert adolescent jokes here.
+  planet_type_id: 1
+
+jupiter:
+  id: 4
+  name: Jupiter
+  description: A gas giant.
+  planet_type_id: 1
+
+betax:
+  id: 5
+  name: Beta X
+  description: Newly discovered Planet X
+  planet_type_id: 5
+
+betay:
+  id: 6
+  name: Beta X
+  description: Newly discovered Planet Y
+  planet_type_id: 5
+
+betaz:
+  id: 7
+  name: Beta X
+  description: Newly discovered Planet Z
+  planet_type_id: 5
+
+betaw:
+  id: 8
+  name: Beta W
+  description: Newly discovered Planet W
+  planet_type_id:

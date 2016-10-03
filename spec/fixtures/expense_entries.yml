@@ -1,0 +1,13 @@
+entry_1:
+  id: 1
+  currency_code: USD
+  employee_id: 3
+  cost: 12.05
+  transaction_date: <%= Date.parse('2014-04-15') %>
+
+entry_2:
+  id: 2
+  currency_code: USD
+  employee_id: 3
+  cost: 12.06
+  transaction_date: <%= Date.parse('2014-04-15') %>

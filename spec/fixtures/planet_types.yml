@@ -1,0 +1,19 @@
+gas_giant:
+  id: 1
+  name: Gas Giant
+
+planetoid:
+  id: 2
+  name: Planetoid
+
+terrestrial:
+  id: 3
+  name: Terrestrial
+
+sulfuric:
+  id: 4
+  name: Sulfuric
+
+unknown:
+  id: 5
+  name: unknown

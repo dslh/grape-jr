@@ -1,0 +1,11 @@
+fact_1:
+  id: 1
+  spouse_name: Jane Author
+  bio: First man to run across Antartica.
+  quality_rating: <%= 23.89/45.6 %>
+  salary: 47000.56
+  date_time_joined: 2013-08-07 20:25:00 UTC +00:00
+  birthday: 1965-06-30
+  bedtime: 2000-01-01 20:00:00 UTC +00:00
+  photo: abc
+  cool: false

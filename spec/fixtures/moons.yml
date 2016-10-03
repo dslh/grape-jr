@@ -1,0 +1,6 @@
+titan:
+  id: 1
+  name: Titan
+  description: Best known of the Saturn moons.
+  planet_id: 1
+

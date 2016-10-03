@@ -1,0 +1,11 @@
+xyz_corp:
+  id: 1
+  name: XYZ Corporation
+
+abc_corp:
+  id: 2
+  name: ABC Corporation
+
+asdfg_corp:
+  id: 3
+  name: ASDFG Corporation

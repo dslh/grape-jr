@@ -1,0 +1,37 @@
+po_1_li_1:
+  id: 1
+  purchase_order_id: 1
+  part_number: 556324
+  quantity: 1
+  item_cost: 45.67
+
+po_1_li_2:
+  id: 2
+  purchase_order_id: 1
+  part_number: 79324231A
+  quantity: 3
+  item_cost: 19.99
+
+li_3:
+  id: 3
+  part_number: 79324231A
+  quantity: 67
+  item_cost: 19.99
+
+li_4:
+  id: 4
+  part_number: 5678
+  quantity: 2
+  item_cost: 199.99
+
+li_5:
+  id: 5
+  part_number: 5WERT
+  quantity: 1
+  item_cost: 299.98
+
+li_6:
+  id: 6
+  part_number: 25washer
+  quantity: 10
+  item_cost: 0.98

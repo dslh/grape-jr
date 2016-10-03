@@ -1,0 +1,7 @@
+rush_order_flag:
+  id: 1
+  name: Rush
+
+ship_together_order_flag:
+  id: 2
+  name: Ship Together

@@ -1,0 +1,9 @@
+crater1:
+  code: S56D
+  description: Very large crater
+  moon_id: 1
+
+crater2:
+  code: A4D3
+  description: Small crater
+  moon_id: 1

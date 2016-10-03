@@ -1,0 +1,64 @@
+short_tag:
+  id: 1
+  name: short
+
+whiny_tag:
+  id: 2
+  name: whiny
+
+grumpy_tag:
+  id: 3
+  name: grumpy
+
+happy_tag:
+  id: 4
+  name: happy
+
+jr_tag:
+  id: 5
+  name: JR
+
+silly_tag:
+  id: 6
+  name: silly
+
+sleepy_tag:
+  id: 7
+  name: sleepy
+
+goofy_tag:
+  id: 8
+  name: goofy
+
+wacky_tag:
+  id: 9
+  name: wacky
+
+bad_tag:
+  id: 10
+  name: bad
+
+tag_11:
+  id: 11
+  name: Tag11
+
+tag_12:
+  id: 12
+  name: Tag12
+
+tag_13:
+  id: 13
+  name: Tag13
+
+tag_14:
+  id: 14
+  name: Tag14
+
+tag_15:
+  id: 15
+  name: Tag15
+
+tag_16:
+  id: 16
+  name: Tag16
+

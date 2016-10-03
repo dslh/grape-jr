@@ -1,0 +1,17 @@
+usd:
+  code: USD
+  name: United States Dollar
+  country_name: United States
+  minor_unit: cent
+
+eur:
+  code: EUR
+  name: Euro Member Countries
+  country_name: Euro Member Countries
+  minor_unit: cent
+
+cad:
+  code: CAD
+  name: Canadian dollar
+  country_name: Canada
+  minor_unit: cent

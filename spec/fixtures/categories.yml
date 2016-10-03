@@ -1,0 +1,35 @@
+category_a:
+  id: 1
+  name: Category A
+  status: active
+
+category_b:
+  id: 2
+  name: Category B
+  status: active
+
+category_c:
+  id: 3
+  name: Category C
+  status: active
+
+category_d:
+  id: 4
+  name: Category D
+  status: inactive
+
+category_e:
+  id: 5
+  name: Category E
+  status: inactive
+
+category_f:
+  id: 6
+  name: Category F
+  status: inactive
+
+category_g:
+  id: 7
+  name: Category G
+  status: inactive
+
