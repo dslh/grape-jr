@@ -1,4 +1,3 @@
-require 'active_record'
 require 'jsonapi-resources'
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
