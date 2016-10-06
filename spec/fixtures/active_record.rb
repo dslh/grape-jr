@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+# rubocop:disable Style/GlobalVars
 require 'jsonapi-resources'
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
@@ -185,7 +187,9 @@ ActiveRecord::Schema.define do
   create_table :purchase_orders_order_flags, force: true do |t|
     t.references :purchase_order, :order_flag, index: true
   end
-  add_index :purchase_orders_order_flags, [:purchase_order_id, :order_flag_id], unique: true, name: "po_flags_idx"
+  add_index :purchase_orders_order_flags,
+            [:purchase_order_id, :order_flag_id],
+            unique: true, name: 'po_flags_idx'
 
   create_table :line_items, force: true do |t|
     t.integer  :purchase_order_id
@@ -218,12 +222,12 @@ ActiveRecord::Schema.define do
   end
 
   create_table :documents, force: true do |t|
-    t.string  :name
+    t.string :name
     t.timestamps null: false
   end
 
   create_table :products, force: true do |t|
-    t.string  :name
+    t.string :name
     t.timestamps null: false
   end
 
@@ -264,12 +268,12 @@ ActiveRecord::Schema.define do
     t.timestamps null: false
   end
 
-  create_table :boxes, force: true  do |t|
+  create_table :boxes, force: true do |t|
     t.string :name
     t.timestamps null: false
   end
 
-  create_table :things, force: true  do |t|
+  create_table :things, force: true do |t|
     t.string :name
     t.references :user
     t.references :box
@@ -277,12 +281,12 @@ ActiveRecord::Schema.define do
     t.timestamps null: false
   end
 
-  create_table :users, force: true  do |t|
+  create_table :users, force: true do |t|
     t.string :name
     t.timestamps null: false
   end
 
-  create_table :related_things, force: true  do |t|
+  create_table :related_things, force: true do |t|
     t.string :name
     t.references :from, references: :thing
     t.references :to, references: :thing
@@ -297,7 +301,8 @@ end
 class Person < ActiveRecord::Base
   has_many :posts, foreign_key: 'author_id'
   has_many :comments, foreign_key: 'author_id'
-  has_many :expense_entries, foreign_key: 'employee_id', dependent: :restrict_with_exception
+  has_many :expense_entries,
+           foreign_key: 'employee_id', dependent: :restrict_with_exception
   has_many :vehicles
   belongs_to :preferences
   belongs_to :hair_cut
@@ -305,8 +310,10 @@ class Person < ActiveRecord::Base
 
   has_and_belongs_to_many :books, join_table: :book_authors
 
-  has_many :even_posts, -> { where('posts.id % 2 = 0') }, class_name: 'Post', foreign_key: 'author_id'
-  has_many :odd_posts, -> { where('posts.id % 2 = 1') }, class_name: 'Post', foreign_key: 'author_id'
+  has_many :even_posts, -> { where('posts.id % 2 = 0') },
+           class_name: 'Post', foreign_key: 'author_id'
+  has_many :odd_posts, -> { where('posts.id % 2 = 1') },
+           class_name: 'Post', foreign_key: 'author_id'
 
   validates :name, presence: true
   validates :date_joined, presence: true
@@ -332,17 +339,15 @@ class Post < ActiveRecord::Base
   before_destroy :destroy_callback
 
   def destroy_callback
-    if title == "can't destroy me"
-      errors.add(:title, "can't destroy me")
+    return unless title == "can't destroy me"
 
-      # :nocov:
-      if Rails::VERSION::MAJOR >= 5
-        throw(:abort)
-      else
-        return false
-      end
-      # :nocov:
-    end
+    errors.add(:title, "can't destroy me")
+
+    # :nocov:
+    throw(:abort) if Rails::VERSION::MAJOR >= 5
+
+    false
+    # :nocov:
   end
 end
 
@@ -408,15 +413,12 @@ class Planet < ActiveRecord::Base
 
   def check_not_pluto
     # Pluto can't be a planet, so cancel the save
-    if name.downcase == 'pluto'
-      # :nocov:
-      if Rails::VERSION::MAJOR >= 5
-        throw(:abort)
-      else
-        return false
-      end
-      # :nocov:
-    end
+    return unless name.casecmp('pluto').zero?
+    # :nocov:
+    throw(:abort) if Rails::VERSION::MAJOR >= 5
+
+    false
+    # :nocov:
   end
 end
 
@@ -437,7 +439,7 @@ class Crater < ActiveRecord::Base
 end
 
 class Preferences < ActiveRecord::Base
-  has_one :author, class_name: 'Person', :inverse_of => 'preferences'
+  has_one :author, class_name: 'Person', inverse_of: 'preferences'
 end
 
 class Fact < ActiveRecord::Base
@@ -448,7 +450,6 @@ class Like < ActiveRecord::Base
 end
 
 class Breed
-
   def initialize(id = nil, name = nil)
     if id.nil?
       @id = $breed_data.new_id
@@ -466,26 +467,24 @@ class Breed
     $breed_data.remove(@id)
   end
 
-  def valid?(context = nil)
+  def valid?(_context = nil)
     @errors.clear
-    if name.is_a?(String) && name.length > 0
-      return true
-    else
-      @errors.add(:name, "can't be blank")
-      return false
-    end
+    return true if name.is_a?(String) && !name.empty?
+
+    @errors.add(:name, "can't be blank")
+    false
   end
 
-  def errors
-    @errors
-  end
+  attr_reader :errors
 end
 
 class Book < ActiveRecord::Base
   has_many :book_comments
-  has_many :approved_book_comments, -> { where(approved: true) }, class_name: "BookComment"
+  has_many :approved_book_comments, -> { where(approved: true) },
+           class_name: 'BookComment'
 
-  has_and_belongs_to_many :authors, join_table: :book_authors, class_name: "Person"
+  has_and_belongs_to_many :authors,
+                          join_table: :book_authors, class_name: 'Person'
 end
 
 class BookComment < ActiveRecord::Base
@@ -495,9 +494,7 @@ class BookComment < ActiveRecord::Base
   def self.for_user(current_user)
     records = self
     # Hide the unapproved comments from people who are not book admins
-    unless current_user && current_user.book_admin
-      records = records.where(approved: true)
-    end
+    records = records.where(approved: true) unless current_user&.book_admin
     records
   end
 end
@@ -507,9 +504,7 @@ class BreedData
     @breeds = {}
   end
 
-  def breeds
-    @breeds
-  end
+  attr_reader :breeds
 
   def new_id
     @breeds.keys.max + 1
@@ -531,15 +526,20 @@ end
 class PurchaseOrder < ActiveRecord::Base
   belongs_to :customer
   has_many :line_items
-  has_many :admin_line_items, class_name: 'LineItem', foreign_key: 'purchase_order_id'
+  has_many :admin_line_items,
+           class_name: 'LineItem', foreign_key: 'purchase_order_id'
 
-  has_and_belongs_to_many :order_flags, join_table: :purchase_orders_order_flags
+  has_and_belongs_to_many :order_flags,
+                          join_table: :purchase_orders_order_flags
 
-  has_and_belongs_to_many :admin_order_flags, join_table: :purchase_orders_order_flags, class_name: 'OrderFlag'
+  has_and_belongs_to_many :admin_order_flags,
+                          join_table: :purchase_orders_order_flags,
+                          class_name: 'OrderFlag'
 end
 
 class OrderFlag < ActiveRecord::Base
-  has_and_belongs_to_many :purchase_orders, join_table: :purchase_orders_order_flags
+  has_and_belongs_to_many :purchase_orders,
+                          join_table: :purchase_orders_order_flags
 end
 
 class LineItem < ActiveRecord::Base
@@ -619,7 +619,6 @@ class People < Grape::JSONAPI::API
 end
 
 class Posts < Grape::JSONAPI::API
-
   class SpecialError < StandardError; end
   class SubSpecialError < Posts::SpecialError; end
   class SerializeError < StandardError; end
@@ -632,16 +631,16 @@ class Posts < Grape::JSONAPI::API
 
   def handle_exceptions(e)
     case e
-      when Posts::SpecialError
-        raise e
-      else
-        super(e)
+    when Posts::SpecialError
+      fail e
+    else
+      super(e)
     end
   end
 
-  #called by test_on_server_error
-  def self.set_callback_message(error)
-    @callback_message = "Sent from method"
+  # called by test_on_server_error
+  def self.callback_message(_error)
+    @callback_message = 'Sent from method'
   end
 
   def resource_serializer_klass
@@ -651,11 +650,9 @@ end
 
 class PostSerializer < JSONAPI::ResourceSerializer
   def initialize(*)
-    if $PostSerializerRaisesErrors
-      raise Posts::SerializeError
-    else
-      super
-    end
+    fail Posts::SerializeError if $PostSerializerRaisesErrors
+
+    super
   end
 end
 
@@ -745,7 +742,7 @@ module Api
 
     class Craters < Grape::JSONAPI::API
       def context
-        {current_user: $test_user}
+        { current_user: $test_user }
       end
     end
 
@@ -768,13 +765,13 @@ module Api
 
     class Books < Grape::JSONAPI::API
       def context
-        {current_user: $test_user}
+        { current_user: $test_user }
       end
     end
 
     class BookComments < Grape::JSONAPI::API
       def context
-        {current_user: $test_user}
+        { current_user: $test_user }
       end
     end
   end
@@ -801,7 +798,7 @@ module Api
   module V5
     class Authors < Grape::JSONAPI::API
       def serialization_options
-        {foo: 'bar'}
+        { foo: 'bar' }
       end
     end
 
@@ -827,7 +824,7 @@ module Api
 
     class PurchaseOrders < Grape::JSONAPI::API
       def context
-        {current_user: $test_user}
+        { current_user: $test_user }
       end
     end
 
@@ -890,19 +887,24 @@ class PersonResource < BaseResource
   def self.verify_name_filter(values, _context)
     values.each do |value|
       if value.length < 3
-        raise JSONAPI::Exceptions::InvalidFilterValue.new(:name, value)
+        fail JSONAPI::Exceptions::InvalidFilterValue.new(:name, value)
       end
     end
-    return values
+    values
   end
-
 end
 
 class PersonWithEvenAndOddPostsResource < JSONAPI::Resource
   model_name 'Person'
 
-  has_many :even_posts, foreign_key: 'author_id', class_name: 'Post', relation_name: :even_posts
-  has_many :odd_posts, foreign_key: 'author_id', class_name: 'Post', relation_name: :odd_posts
+  has_many :even_posts,
+           foreign_key: 'author_id',
+           class_name: 'Post',
+           relation_name: :even_posts
+  has_many :odd_posts,
+           foreign_key: 'author_id',
+           class_name: 'Post',
+           relation_name: :odd_posts
 end
 
 class SpecialBaseResource < BaseResource
@@ -914,7 +916,7 @@ end
 class SpecialPersonResource < SpecialBaseResource
   model_name 'Person'
 
-  def self.records(options = {})
+  def self.records(_options = {})
     Person.where(special: true)
   end
 end
@@ -955,7 +957,7 @@ class TagResource < JSONAPI::Resource
 
   has_many :posts
   # Not including the planets relationship so they don't get output
-  #has_many :planets
+  # has_many :planets
 end
 
 class SectionResource < JSONAPI::Resource
@@ -977,35 +979,40 @@ class PostResource < JSONAPI::Resource
 
   has_one :author, class_name: 'Person'
   has_one :section
-  has_many :tags, acts_as_set: true, inverse_relationship: :posts, eager_load_on_include: false
+  has_many :tags,
+           acts_as_set: true,
+           inverse_relationship: :posts,
+           eager_load_on_include: false
   has_many :comments, acts_as_set: false, inverse_relationship: :post
 
   # Not needed - just for testing
   primary_key :id
 
+  # rubocop:disable Lint/UselessAssignment
   before_save do
-    msg = "Before save"
+    msg = 'Before save'
   end
 
   after_save do
-    msg = "After save"
+    msg = 'After save'
   end
 
   before_update do
-    msg = "Before update"
+    msg = 'Before update'
   end
 
   after_update do
-    msg = "After update"
+    msg = 'After update'
   end
 
   before_replace_fields do
-    msg = "Before replace_fields"
+    msg = 'Before replace_fields'
   end
 
   after_replace_fields do
-    msg = "After replace_fields"
+    msg = 'After replace_fields'
   end
+  # rubocop:enable Lint/UselessAssignment
 
   around_update :around_update_check
 
@@ -1021,32 +1028,34 @@ class PostResource < JSONAPI::Resource
 
   def title=(title)
     @model.title = title
-    if title == 'BOOM'
-      raise 'The Server just tested going boom. If this was a real emergency you would be really dead right now.'
-    end
+    return unless title == 'BOOM'
+
+    fail 'Fall down go boom.'
   end
 
   filters :title, :author, :tags, :comments
-  filter :id, verify: ->(values, context) {
+  filter :id, verify: lambda { |values, context|
     verify_keys(values, context)
     return values
   }
   filter :ids,
-         verify: ->(values, context) {
+         verify: lambda { |values, context|
            verify_keys(values, context)
            return values
          },
-         apply: -> (records, value, _options) {
+         apply: lambda { |records, value, _options|
            records.where('id IN (?)', value)
          }
 
   filter :search,
-    verify: ->(values, context) {
-      values.all?{|v| (v.is_a?(Hash) || v.is_a?(ActionController::Parameters)) } && values
-    },
-    apply: -> (records, values, _options) {
-      records.where(title: values.first['title'])
-    }
+         verify: lambda { |values, _context|
+           values.all? do |v|
+             (v.is_a?(Hash) || v.is_a?(ActionController::Parameters))
+           end && values
+         },
+         apply: lambda { |records, values, _options|
+           records.where(title: values.first['title'])
+         }
 
   def self.updatable_fields(context)
     super(context) - [:author, :subject]
@@ -1062,8 +1071,12 @@ class PostResource < JSONAPI::Resource
 
   def self.verify_key(key, context = nil)
     super(key)
-    raise JSONAPI::Exceptions::RecordNotFound.new(key) unless find_by_key(key, context: context)
-    return key
+
+    unless find_by_key(key, context: context)
+      fail JSONAPI::Exceptions::RecordNotFound, key
+    end
+
+    key
   end
 end
 
@@ -1099,7 +1112,7 @@ class BreedResource < JSONAPI::Resource
   # This is unneeded, just here for testing
   routing_options param: :id
 
-  def self.find(filters, options = {})
+  def self.find(_filters, options = {})
     breeds = []
     $breed_data.breeds.values.each do |breed|
       breeds.push(BreedResource.new(breed, options[:context]))
@@ -1113,7 +1126,7 @@ class BreedResource < JSONAPI::Resource
 
   def _save
     super
-    return :accepted
+    :accepted
   end
 end
 
@@ -1126,7 +1139,7 @@ class PlanetResource < JSONAPI::Resource
 
   has_many :tags, acts_as_set: true
 
-  def records_for_moons(opts = {})
+  def records_for_moons(_opts = {})
     Moon.joins(:craters).select('moons.*, craters.code').distinct
   end
 end
@@ -1156,12 +1169,16 @@ class CraterResource < JSONAPI::Resource
 
   has_one :moon
 
-  filter :description, apply: -> (records, value, options) {
-    fail "context not set" unless options[:context][:current_user] != nil && options[:context][:current_user] == $test_user
-    records.where(:description => value)
+  filter :description, apply: lambda { |records, value, options|
+    unless !options[:context][:current_user].nil? &&
+           options[:context][:current_user] == $test_user
+      fail 'context not set'
+    end
+
+    records.where(description: value)
   }
 
-  def self.verify_key(key, context = nil)
+  def self.verify_key(key, _context = nil)
     key && String(key)
   end
 end
@@ -1169,9 +1186,9 @@ end
 class PreferencesResource < JSONAPI::Resource
   attribute :advanced_mode
 
-  has_one :author, :foreign_key_on => :related
+  has_one :author, foreign_key_on: :related
 
-  def self.find_records(filters, options = {})
+  def self.find_records(_filters, _options = {})
     Preferences.limit(1)
   end
 end
@@ -1253,7 +1270,7 @@ class SimpleCustomLinkResource < JSONAPI::Resource
   filters :writer
 
   def custom_links(options)
-    { raw: options[:serializer].link_builder.self_link(self) + "/raw" }
+    { raw: options[:serializer].link_builder.self_link(self) + '/raw' }
   end
 end
 
@@ -1272,7 +1289,10 @@ class CustomLinkWithRelativePathOptionResource < JSONAPI::Resource
   filters :writer
 
   def custom_links(options)
-    { raw: options[:serializer].link_builder.self_link(self) + "/super/duper/path.xml" }
+    {
+      raw: options[:serializer].link_builder.self_link(self) +
+        '/super/duper/path.xml'
+    }
   end
 end
 
@@ -1291,9 +1311,11 @@ class CustomLinkWithIfCondition < JSONAPI::Resource
   filters :writer
 
   def custom_links(options)
-    if title == "JR Solves your serialization woes!"
-      {conditional_custom_link: options[:serializer].link_builder.self_link(self) + "/conditional/link.json"}
-    end
+    return unless title == 'JR Solves your serialization woes!'
+
+    base = options[:serializer].link_builder.self_link(self)
+
+    { conditional_custom_link: "#{base}/conditional/link.json'" }
   end
 end
 
@@ -1311,9 +1333,13 @@ class CustomLinkWithLambda < JSONAPI::Resource
 
   filters :writer
 
-  def custom_links(options)
+  def custom_links(_options)
     {
-      link_to_external_api: "http://external-api.com/posts/#{ created_at.year }/#{ created_at.month }/#{ created_at.day }-#{ subject.gsub(' ', '-') }"
+      link_to_external_api: 'http://external-api.com/posts/' +
+        [
+          created_at.year, created_at.month, created_at.day
+        ].map(&:to_s).join('/') +
+        "-#{subject.tr(' ', '-')}"
     }
   end
 end
@@ -1342,7 +1368,7 @@ module Api
       has_many :comments, acts_as_set: false
 
       def self.default_sort
-        [{field: 'title', direction: :asc}, {field: 'id', direction: :desc}]
+        [{ field: 'title', direction: :asc }, { field: 'id', direction: :desc }]
       end
 
       def subject
@@ -1384,18 +1410,20 @@ module Api
 
       has_many :authors
 
-      has_many :book_comments, relation_name: -> (options = {}) {
+      has_many :book_comments, relation_name: lambda { |options = {}|
         context = options[:context]
         current_user = context ? context[:current_user] : nil
 
-        unless current_user && current_user.book_admin
-          :approved_book_comments
-        else
+        if current_user&.book_admin
           :book_comments
+        else
+          :approved_book_comments
         end
       }, reflect: true
 
-      has_many :aliased_comments, class_name: 'BookComments', relation_name: :approved_book_comments
+      has_many :aliased_comments,
+               class_name: 'BookComments',
+               relation_name: :approved_book_comments
 
       filters :book_comments
       filter :banned, apply: :apply_filter_banned
@@ -1415,7 +1443,7 @@ module Api
 
           records = _model_class
           # Hide the banned books from people who are not book admins
-          unless current_user && current_user.book_admin
+          unless current_user&.book_admin
             records = records.where(not_banned_books)
           end
           records
@@ -1426,11 +1454,10 @@ module Api
           current_user = context ? context[:current_user] : nil
 
           # Only book admins might filter for banned books
-          if current_user && current_user.book_admin
-            records.where('books.banned = ?', value[0] == 'true')
-          end
-        end
+          return unless current_user&.book_admin
 
+          records.where('books.banned = ?', value[0] == 'true')
+        end
       end
     end
 
@@ -1441,11 +1468,11 @@ module Api
       has_one :author, class_name: 'Person'
 
       filters :book
-      filter :approved, apply: ->(records, value, options) {
+      filter :approved, apply: lambda { |records, value, options|
         context = options[:context]
         current_user = context ? context[:current_user] : nil
 
-        if current_user && current_user.book_admin
+        if current_user&.book_admin
           records.where(approved_comments(value[0] == 'true'))
         end
       }
@@ -1502,14 +1529,14 @@ module Api
 
       filter :name
 
-      def self.find_records(filters, options = {})
+      def self.find_records(filters, _options = {})
         rel = _model_class
         filters.each do |attr, filter|
-          if attr.to_s == "id"
-            rel = rel.where(id: filter)
-          else
-            rel = rel.where("\"#{attr}\" LIKE \"%#{filter[0]}%\"")
-          end
+          rel = if attr.to_s == 'id'
+                  rel.where(id: filter)
+                else
+                  rel.where("\"#{attr}\" LIKE \"%#{filter[0]}%\"")
+                end
         end
         rel
       end
@@ -1573,29 +1600,33 @@ module Api
       attribute :total
 
       has_one :customer
-      has_many :line_items, relation_name: -> (options = {}) {
-                            context = options[:context]
-                            current_user = context ? context[:current_user] : nil
+      has_many :line_items,
+               relation_name: lambda { |options = {}|
+                                context = options[:context]
+                                current_user =
+                                  context ? context[:current_user] : nil
 
-                            unless current_user && current_user.book_admin
-                              :line_items
-                            else
-                              :admin_line_items
-                            end
-                          },
+                                if current_user&.book_admin
+                                  :admin_line_items
+                                else
+                                  :line_items
+                                end
+                              },
                reflect: false
 
-      has_many :order_flags, acts_as_set: true,
-               relation_name: -> (options = {}) {
-                             context = options[:context]
-                             current_user = context ? context[:current_user] : nil
+      has_many :order_flags,
+               acts_as_set: true,
+               relation_name: lambda { |options = {}|
+                                context = options[:context]
+                                current_user =
+                                  context ? context[:current_user] : nil
 
-                             unless current_user && current_user.book_admin
-                               :order_flags
-                             else
-                               :admin_order_flags
-                             end
-                           }
+                                if current_user&.book_admin
+                                  :admin_order_flags
+                                else
+                                  :order_flags
+                                end
+                              }
     end
 
     class OrderFlagResource < JSONAPI::Resource
@@ -1635,7 +1666,7 @@ module Api
 
       # Raise exception for failure in controller
       def name
-        fail "Something Exceptional Happened"
+        fail 'Something Exceptional Happened'
       end
     end
   end
@@ -1691,14 +1722,14 @@ end
 
 module Legacy
   class FlatPost < ActiveRecord::Base
-    self.table_name = "posts"
+    self.table_name = 'posts'
   end
 end
 
 class FlatPostResource < JSONAPI::Resource
-  model_name "Legacy::FlatPost", add_model_hint: false
+  model_name 'Legacy::FlatPost', add_model_hint: false
 
-  model_hint model: "Legacy::FlatPost", resource: FlatPostResource
+  model_hint model: 'Legacy::FlatPost', resource: FlatPostResource
 
   attribute :title
 end
@@ -1707,20 +1738,22 @@ class FlatPosts < Grape::JSONAPI::API
 end
 
 # CustomProcessors
-class Api::V4::BookProcessor < JSONAPI::Processor
-  after_find do
-    unless @results.is_a?(JSONAPI::ErrorsOperationResult)
-      @result.meta[:total_records] = @result.record_count
-      @result.links['spec'] = 'https://test_corp.com'
+module Api
+  module V4
+    class BookProcessor < JSONAPI::Processor
+      after_find do
+        unless @results.is_a?(JSONAPI::ErrorsOperationResult)
+          @result.meta[:total_records] = @result.record_count
+          @result.links['spec'] = 'https://test_corp.com'
+        end
+      end
     end
   end
 end
 
 class PostProcessor < JSONAPI::Processor
   def find
-    if $PostProcessorRaisesErrors
-      raise Posts::SubSpecialError
-    end
+    fail Posts::SubSpecialError if $PostProcessorRaisesErrors
     # puts("In custom Operations Processor without Namespace")
     super
   end
@@ -1737,9 +1770,7 @@ module Api
   module V7
     class CategoryProcessor < JSONAPI::Processor
       def show
-        if $PostProcessorRaisesErrors
-          raise Posts::SubSpecialError
-        end
+        fail Posts::SubSpecialError if $PostProcessorRaisesErrors
         # puts("In custom Operations Processor without Namespace")
         super
       end

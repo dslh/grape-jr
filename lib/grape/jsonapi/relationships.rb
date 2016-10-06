@@ -1,7 +1,10 @@
+# frozen_string_literal: true
 require_relative 'resources'
 
 module Grape
   module JSONAPI
+    # Additional setup code, for declaring relationship endpoints as part of a
+    # JSON API resource.
     module Relationships
       include Resources
 
