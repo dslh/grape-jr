@@ -12,6 +12,4 @@ end
 
 require_relative 'jsonapi/api'
 require_relative 'jsonapi/helpers'
-Dir["#{File.basename __FILE__}/jsonapi/value_formatters/*.rb"].each do |lib|
-  require lib
-end
+require_relative 'jsonapi/value_formatters/iso_utc_timestamp_value_formatter'
