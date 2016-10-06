@@ -308,7 +308,6 @@ class Person < ActiveRecord::Base
   has_many :even_posts, -> { where('posts.id % 2 = 0') }, class_name: 'Post', foreign_key: 'author_id'
   has_many :odd_posts, -> { where('posts.id % 2 = 1') }, class_name: 'Post', foreign_key: 'author_id'
 
-  ### Validations
   validates :name, presence: true
   validates :date_joined, presence: true
 end
@@ -613,31 +612,27 @@ module Api
 end
 
 ### CONTROLLERS
-class AuthorsController < JSONAPI::ResourceControllerMetal
+class Authors < Grape::JSONAPI::API
 end
 
-class PeopleController < JSONAPI::ResourceController
+class People < Grape::JSONAPI::API
 end
 
-class BaseController < ActionController::Base
-  include JSONAPI::ActsAsResourceController
-end
-
-class PostsController < BaseController
+class Posts < Grape::JSONAPI::API
 
   class SpecialError < StandardError; end
-  class SubSpecialError < PostsController::SpecialError; end
+  class SubSpecialError < Posts::SpecialError; end
   class SerializeError < StandardError; end
 
   # This is used to test that classes that are whitelisted are reraised by
   # the operations dispatcher.
-  rescue_from PostsController::SpecialError do
+  rescue_from Posts::SpecialError do
     head :forbidden
   end
 
   def handle_exceptions(e)
     case e
-      when PostsController::SpecialError
+      when Posts::SpecialError
         raise e
       else
         super(e)
@@ -657,128 +652,127 @@ end
 class PostSerializer < JSONAPI::ResourceSerializer
   def initialize(*)
     if $PostSerializerRaisesErrors
-      raise PostsController::SerializeError
+      raise Posts::SerializeError
     else
       super
     end
   end
 end
 
-class CommentsController < JSONAPI::ResourceController
+class Comments < Grape::JSONAPI::API
 end
 
-class FirmsController < JSONAPI::ResourceController
+class Firms < Grape::JSONAPI::API
 end
 
-class SectionsController < JSONAPI::ResourceController
+class Sections < Grape::JSONAPI::API
 end
 
-class TagsController < JSONAPI::ResourceController
+class Tags < Grape::JSONAPI::API
 end
 
-class IsoCurrenciesController < JSONAPI::ResourceController
+class IsoCurrencies < Grape::JSONAPI::API
 end
 
-class ExpenseEntriesController < JSONAPI::ResourceController
+class ExpenseEntries < Grape::JSONAPI::API
 end
 
-class BreedsController < JSONAPI::ResourceController
+class Breeds < Grape::JSONAPI::API
 end
 
-class FactsController < JSONAPI::ResourceController
+class Facts < Grape::JSONAPI::API
 end
 
-class CategoriesController < JSONAPI::ResourceController
+class Categories < Grape::JSONAPI::API
 end
 
-class PicturesController < JSONAPI::ResourceController
+class Pictures < Grape::JSONAPI::API
 end
 
-class DocumentsController < JSONAPI::ResourceController
+class Documents < Grape::JSONAPI::API
 end
 
-class ProductsController < JSONAPI::ResourceController
+class Products < Grape::JSONAPI::API
 end
 
-class ImageablesController < JSONAPI::ResourceController
+class Imageables < Grape::JSONAPI::API
 end
 
-class VehiclesController < JSONAPI::ResourceController
+class Vehicles < Grape::JSONAPI::API
 end
 
-class CarsController < JSONAPI::ResourceController
+class Cars < Grape::JSONAPI::API
 end
 
-class BoatsController < JSONAPI::ResourceController
+class Boats < Grape::JSONAPI::API
 end
 
-class BooksController < JSONAPI::ResourceController
+class Books < Grape::JSONAPI::API
 end
 
 ### CONTROLLERS
 module Api
   module V1
-    class AuthorsController < JSONAPI::ResourceController
+    class Authors < Grape::JSONAPI::API
     end
 
-    class PeopleController < JSONAPI::ResourceController
+    class People < Grape::JSONAPI::API
     end
 
-    class PostsController < ActionController::Base
-      include JSONAPI::ActsAsResourceController
+    class Posts < Grape::JSONAPI::API
     end
 
-    class TagsController < JSONAPI::ResourceController
+    class Tags < Grape::JSONAPI::API
     end
 
-    class IsoCurrenciesController < JSONAPI::ResourceController
+    class IsoCurrencies < Grape::JSONAPI::API
     end
 
-    class ExpenseEntriesController < JSONAPI::ResourceController
+    class ExpenseEntries < Grape::JSONAPI::API
     end
 
-    class BreedsController < JSONAPI::ResourceController
+    class Breeds < Grape::JSONAPI::API
     end
 
-    class PlanetsController < JSONAPI::ResourceController
+    class Planets < Grape::JSONAPI::API
     end
 
-    class PlanetTypesController < JSONAPI::ResourceController
+    class PlanetTypes < Grape::JSONAPI::API
     end
 
-    class MoonsController < JSONAPI::ResourceController
+    class Moons < Grape::JSONAPI::API
     end
 
-    class CratersController < JSONAPI::ResourceController
+    class Craters < Grape::JSONAPI::API
       def context
         {current_user: $test_user}
       end
     end
 
-    class LikesController < JSONAPI::ResourceController
+    class Likes < Grape::JSONAPI::API
     end
   end
 
   module V2
-    class AuthorsController < JSONAPI::ResourceController
+    class Authors < Grape::JSONAPI::API
     end
 
-    class PeopleController < JSONAPI::ResourceController
+    class People < Grape::JSONAPI::API
     end
 
-    class PostsController < JSONAPI::ResourceController
+    class Posts < Grape::JSONAPI::API
     end
 
-    class PreferencesController < JSONAPI::ResourceController
+    class Preferences < Grape::JSONAPI::API
     end
 
-    class BooksController < JSONAPI::ResourceController
+    class Books < Grape::JSONAPI::API
       def context
         {current_user: $test_user}
       end
     end
 
-    class BookCommentsController < JSONAPI::ResourceController
+    class BookComments < Grape::JSONAPI::API
       def context
         {current_user: $test_user}
       end
@@ -786,92 +780,92 @@ module Api
   end
 
   module V3
-    class PostsController < JSONAPI::ResourceController
+    class Posts < Grape::JSONAPI::API
     end
   end
 
   module V4
-    class PostsController < JSONAPI::ResourceController
+    class Posts < Grape::JSONAPI::API
     end
 
-    class ExpenseEntriesController < JSONAPI::ResourceController
+    class ExpenseEntries < Grape::JSONAPI::API
     end
 
-    class IsoCurrenciesController < JSONAPI::ResourceController
+    class IsoCurrencies < Grape::JSONAPI::API
     end
 
-    class BooksController < JSONAPI::ResourceController
+    class Books < Grape::JSONAPI::API
     end
   end
 
   module V5
-    class AuthorsController < JSONAPI::ResourceController
+    class Authors < Grape::JSONAPI::API
       def serialization_options
         {foo: 'bar'}
       end
     end
 
-    class PostsController < JSONAPI::ResourceController
+    class Posts < Grape::JSONAPI::API
     end
 
-    class ExpenseEntriesController < JSONAPI::ResourceController
+    class ExpenseEntries < Grape::JSONAPI::API
     end
 
-    class IsoCurrenciesController < JSONAPI::ResourceController
+    class IsoCurrencies < Grape::JSONAPI::API
     end
   end
 
   module V6
-    class PostsController < JSONAPI::ResourceController
+    class Posts < Grape::JSONAPI::API
     end
 
-    class SectionsController < JSONAPI::ResourceController
+    class Sections < Grape::JSONAPI::API
     end
 
-    class CustomersController < JSONAPI::ResourceController
+    class Customers < Grape::JSONAPI::API
     end
 
-    class PurchaseOrdersController < JSONAPI::ResourceController
+    class PurchaseOrders < Grape::JSONAPI::API
       def context
         {current_user: $test_user}
       end
     end
 
-    class LineItemsController < JSONAPI::ResourceController
+    class LineItems < Grape::JSONAPI::API
     end
 
-    class OrderFlagsController < JSONAPI::ResourceController
+    class OrderFlags < Grape::JSONAPI::API
     end
   end
 
   module V7
-    class CustomersController < JSONAPI::ResourceController
+    class Customers < Grape::JSONAPI::API
     end
 
-    class PurchaseOrdersController < JSONAPI::ResourceController
+    class PurchaseOrders < Grape::JSONAPI::API
     end
 
-    class LineItemsController < JSONAPI::ResourceController
+    class LineItems < Grape::JSONAPI::API
     end
 
-    class OrderFlagsController < JSONAPI::ResourceController
+    class OrderFlags < Grape::JSONAPI::API
     end
 
-    class CategoriesController < JSONAPI::ResourceController
+    class Categories < Grape::JSONAPI::API
     end
 
-    class ClientsController < JSONAPI::ResourceController
+    class Clients < Grape::JSONAPI::API
     end
   end
 
   module V8
-    class NumerosTelefoneController < JSONAPI::ResourceController
+    class NumerosTelefone < Grape::JSONAPI::API
     end
   end
 end
 
 module Api
-  class BoxesController < JSONAPI::ResourceController
+  class Boxes < Grape::JSONAPI::API
   end
 end
 
@@ -1709,7 +1703,7 @@ class FlatPostResource < JSONAPI::Resource
   attribute :title
 end
 
-class FlatPostsController < JSONAPI::ResourceController
+class FlatPosts < Grape::JSONAPI::API
 end
 
 # CustomProcessors
@@ -1725,7 +1719,7 @@ end
 class PostProcessor < JSONAPI::Processor
   def find
     if $PostProcessorRaisesErrors
-      raise PostsController::SubSpecialError
+      raise Posts::SubSpecialError
     end
     # puts("In custom Operations Processor without Namespace")
     super
@@ -1744,7 +1738,7 @@ module Api
     class CategoryProcessor < JSONAPI::Processor
       def show
         if $PostProcessorRaisesErrors
-          raise PostsController::SubSpecialError
+          raise Posts::SubSpecialError
         end
         # puts("In custom Operations Processor without Namespace")
         super
