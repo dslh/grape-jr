@@ -1,7 +1,7 @@
 module Grape
   module JSONAPI
     # Methods for linking to the resource class for a controller.
-    # Scopes including this module should define a resource_class method
+    # Scopes including this module should define a controller_class method
     module Resources
       def controller_name
         controller_class.name.gsub(/::/, '/')
