@@ -10,12 +10,22 @@ end
 require 'grape/jsonapi'
 require 'pry-byebug'
 
+require 'active_record/fixtures'
+require 'rspec/rails'
+
 JSONAPI.configure do |config|
   config.json_key_format = :dasherized_key
 end
 
+require_relative 'support/fixture_helpers'
+require_relative 'support/jsonapi_helpers'
+require_relative 'support/jsonapi_matchers'
+
 RSpec.configure do |config|
   config.include Rack::Test::Methods
+  config.include FixtureHelpers
+  config.include JsonapiHelpers
+  config.use_transactional_fixtures = true
 end
 
 Rails.env = 'test'
@@ -28,9 +38,12 @@ class TestApp < Rails::Application
   ActiveRecord::Schema.verbose = false
 end
 
-ActiveRecord::Base.establish_connection(
-  YAML.load_file(File.expand_path('../config/database.yml', __FILE__))['test']
-)
+db_configurations =
+  YAML.load_file(File.expand_path('../config/database.yml', __FILE__))
+ActiveRecord::Base.establish_connection db_configurations['test']
+ActiveRecord::Base.configurations = db_configurations
 
 TestApp.initialize!
+
 require_relative 'fixtures/active_record'
+require_relative 'support/formatters'

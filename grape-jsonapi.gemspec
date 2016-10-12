@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
 
   %w(
     bundler otr-activerecord rake rspec rubocop pry-byebug simplecov sqlite3
+    rspec-rails json-schema
   ).each do |gem|
     spec.add_development_dependency gem
   end

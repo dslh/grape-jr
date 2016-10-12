@@ -51,14 +51,11 @@ module Grape
           define_relationship_helpers(relationship)
 
           get { process_relationship_request(:show) }
-          patch { forbidden_operation }
-          delete { forbidden_operation }
-          # patch { process_relationship_request(:update) }
-          # delete { process_relationship_request(:destroy) }
+          patch { process_relationship_request(:update) }
+          delete { process_relationship_request(:destroy) }
 
           if to_many? relationship
-            post { forbidden_operation }
-            # post { process_relationship_request(:create) }
+            post { process_relationship_request(:create) }
           end
         end
       end

@@ -5,24 +5,34 @@ module Grape
   module JSONAPI
     # Uses the jsonapi-resources gem to provide a JSON-API compliant Grape::API.
     class API < ::Grape::API
-      content_type :json, ::JSONAPI::MEDIA_TYPE
+      def self.inherited(subclass)
+        super
+        subclass.jsonapi_resource
+      end
 
       class << self
         include Relationships
 
-        def jsonapi_resource(model_class, options = {})
-          resource model_class.name.underscore.pluralize do
+        def jsonapi_resource
+          content_type :json, ::JSONAPI::MEDIA_TYPE
+          default_format :json
+
+          resource name.demodulize.underscore do
             helpers { include Helpers }
 
             get { process_request(:index) }
-            post { process_request(:create) } unless options[:read_only]
+            post { process_request(:create) }
 
-            route_param :id do
-              get { process_request(:show) }
-              patch { process_request(:update) } unless options[:read_only]
+            id_route
+          end
+        end
 
-              add_resource_relationships(options)
-            end
+        def id_route
+          route_param :id do
+            get { process_request(:show) }
+            patch { process_request(:update) }
+
+            add_resource_relationships(options)
           end
         end
       end

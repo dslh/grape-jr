@@ -611,261 +611,6 @@ module Api
   end
 end
 
-### CONTROLLERS
-class Authors < Grape::JSONAPI::API
-end
-
-class People < Grape::JSONAPI::API
-end
-
-class Posts < Grape::JSONAPI::API
-  class SpecialError < StandardError; end
-  class SubSpecialError < Posts::SpecialError; end
-  class SerializeError < StandardError; end
-
-  # This is used to test that classes that are whitelisted are reraised by
-  # the operations dispatcher.
-  rescue_from Posts::SpecialError do
-    head :forbidden
-  end
-
-  def handle_exceptions(e)
-    case e
-    when Posts::SpecialError
-      fail e
-    else
-      super(e)
-    end
-  end
-
-  # called by test_on_server_error
-  def self.callback_message(_error)
-    @callback_message = 'Sent from method'
-  end
-
-  def resource_serializer_klass
-    PostSerializer
-  end
-end
-
-class PostSerializer < JSONAPI::ResourceSerializer
-  def initialize(*)
-    fail Posts::SerializeError if $PostSerializerRaisesErrors
-
-    super
-  end
-end
-
-class Comments < Grape::JSONAPI::API
-end
-
-class Firms < Grape::JSONAPI::API
-end
-
-class Sections < Grape::JSONAPI::API
-end
-
-class Tags < Grape::JSONAPI::API
-end
-
-class IsoCurrencies < Grape::JSONAPI::API
-end
-
-class ExpenseEntries < Grape::JSONAPI::API
-end
-
-class Breeds < Grape::JSONAPI::API
-end
-
-class Facts < Grape::JSONAPI::API
-end
-
-class Categories < Grape::JSONAPI::API
-end
-
-class Pictures < Grape::JSONAPI::API
-end
-
-class Documents < Grape::JSONAPI::API
-end
-
-class Products < Grape::JSONAPI::API
-end
-
-class Imageables < Grape::JSONAPI::API
-end
-
-class Vehicles < Grape::JSONAPI::API
-end
-
-class Cars < Grape::JSONAPI::API
-end
-
-class Boats < Grape::JSONAPI::API
-end
-
-class Books < Grape::JSONAPI::API
-end
-
-### CONTROLLERS
-module Api
-  module V1
-    class Authors < Grape::JSONAPI::API
-    end
-
-    class People < Grape::JSONAPI::API
-    end
-
-    class Posts < Grape::JSONAPI::API
-    end
-
-    class Tags < Grape::JSONAPI::API
-    end
-
-    class IsoCurrencies < Grape::JSONAPI::API
-    end
-
-    class ExpenseEntries < Grape::JSONAPI::API
-    end
-
-    class Breeds < Grape::JSONAPI::API
-    end
-
-    class Planets < Grape::JSONAPI::API
-    end
-
-    class PlanetTypes < Grape::JSONAPI::API
-    end
-
-    class Moons < Grape::JSONAPI::API
-    end
-
-    class Craters < Grape::JSONAPI::API
-      def context
-        { current_user: $test_user }
-      end
-    end
-
-    class Likes < Grape::JSONAPI::API
-    end
-  end
-
-  module V2
-    class Authors < Grape::JSONAPI::API
-    end
-
-    class People < Grape::JSONAPI::API
-    end
-
-    class Posts < Grape::JSONAPI::API
-    end
-
-    class Preferences < Grape::JSONAPI::API
-    end
-
-    class Books < Grape::JSONAPI::API
-      def context
-        { current_user: $test_user }
-      end
-    end
-
-    class BookComments < Grape::JSONAPI::API
-      def context
-        { current_user: $test_user }
-      end
-    end
-  end
-
-  module V3
-    class Posts < Grape::JSONAPI::API
-    end
-  end
-
-  module V4
-    class Posts < Grape::JSONAPI::API
-    end
-
-    class ExpenseEntries < Grape::JSONAPI::API
-    end
-
-    class IsoCurrencies < Grape::JSONAPI::API
-    end
-
-    class Books < Grape::JSONAPI::API
-    end
-  end
-
-  module V5
-    class Authors < Grape::JSONAPI::API
-      def serialization_options
-        { foo: 'bar' }
-      end
-    end
-
-    class Posts < Grape::JSONAPI::API
-    end
-
-    class ExpenseEntries < Grape::JSONAPI::API
-    end
-
-    class IsoCurrencies < Grape::JSONAPI::API
-    end
-  end
-
-  module V6
-    class Posts < Grape::JSONAPI::API
-    end
-
-    class Sections < Grape::JSONAPI::API
-    end
-
-    class Customers < Grape::JSONAPI::API
-    end
-
-    class PurchaseOrders < Grape::JSONAPI::API
-      def context
-        { current_user: $test_user }
-      end
-    end
-
-    class LineItems < Grape::JSONAPI::API
-    end
-
-    class OrderFlags < Grape::JSONAPI::API
-    end
-  end
-
-  module V7
-    class Customers < Grape::JSONAPI::API
-    end
-
-    class PurchaseOrders < Grape::JSONAPI::API
-    end
-
-    class LineItems < Grape::JSONAPI::API
-    end
-
-    class OrderFlags < Grape::JSONAPI::API
-    end
-
-    class Categories < Grape::JSONAPI::API
-    end
-
-    class Clients < Grape::JSONAPI::API
-    end
-  end
-
-  module V8
-    class NumerosTelefone < Grape::JSONAPI::API
-    end
-  end
-end
-
-module Api
-  class Boxes < Grape::JSONAPI::API
-  end
-end
-
 ### RESOURCES
 class BaseResource < JSONAPI::Resource
   abstract
@@ -1378,6 +1123,8 @@ module Api
       filters :writer
     end
 
+    class AuthorResource < AuthorResource; end
+    class BookResource < BookResource; end
     class PersonResource < PersonResource; end
     class CommentResource < CommentResource; end
     class TagResource < TagResource; end
@@ -1403,6 +1150,12 @@ module Api
     class PreferencesResource < PreferencesResource; end
     class PersonResource < PersonResource; end
     class PostResource < PostResource; end
+    class AuthorResource < AuthorResource; end
+    class CommentResource < CommentResource; end
+    class VehicleResource < VehicleResource; end
+    class HairCutResource < HairCutResource; end
+    class SectionResource < SectionResource; end
+    class TagResource < TagResource; end
 
     class BookResource < JSONAPI::Resource
       attribute :title
@@ -1497,6 +1250,10 @@ end
 
 module Api
   module V3
+    class CommentResource < CommentResource; end
+    class TagResource < TagResource; end
+    class SectionResource < SectionResource; end
+    class PersonResource < PersonResource; end
     class PostResource < PostResource; end
     class PreferencesResource < PreferencesResource; end
   end
@@ -1508,6 +1265,9 @@ module Api
     class PersonResource < PersonResource; end
     class ExpenseEntryResource < ExpenseEntryResource; end
     class IsoCurrencyResource < IsoCurrencyResource; end
+    class SectionResource < SectionResource; end
+    class TagResource < TagResource; end
+    class CommentResource < CommentResource; end
 
     class BookResource < Api::V2::BookResource
       paginator :paged
@@ -1803,6 +1563,261 @@ module Api
 
   class UserResource < JSONAPI::Resource
     has_many :things
+  end
+end
+
+### CONTROLLERS
+class Authors < Grape::JSONAPI::API
+end
+
+class People < Grape::JSONAPI::API
+end
+
+class Posts < Grape::JSONAPI::API
+  class SpecialError < StandardError; end
+  class SubSpecialError < Posts::SpecialError; end
+  class SerializeError < StandardError; end
+
+  # This is used to test that classes that are whitelisted are reraised by
+  # the operations dispatcher.
+  rescue_from Posts::SpecialError do
+    head :forbidden
+  end
+
+  def handle_exceptions(e)
+    case e
+    when Posts::SpecialError
+      fail e
+    else
+      super(e)
+    end
+  end
+
+  # called by test_on_server_error
+  def self.callback_message(_error)
+    @callback_message = 'Sent from method'
+  end
+
+  def resource_serializer_klass
+    PostSerializer
+  end
+end
+
+class PostSerializer < JSONAPI::ResourceSerializer
+  def initialize(*)
+    fail Posts::SerializeError if $PostSerializerRaisesErrors
+
+    super
+  end
+end
+
+class Comments < Grape::JSONAPI::API
+end
+
+class Firms < Grape::JSONAPI::API
+end
+
+class Sections < Grape::JSONAPI::API
+end
+
+class Tags < Grape::JSONAPI::API
+end
+
+class IsoCurrencies < Grape::JSONAPI::API
+end
+
+class ExpenseEntries < Grape::JSONAPI::API
+end
+
+class Breeds < Grape::JSONAPI::API
+end
+
+class Facts < Grape::JSONAPI::API
+end
+
+class Categories < Grape::JSONAPI::API
+end
+
+class Pictures < Grape::JSONAPI::API
+end
+
+class Documents < Grape::JSONAPI::API
+end
+
+class Products < Grape::JSONAPI::API
+end
+
+class Imageables < Grape::JSONAPI::API
+end
+
+class Vehicles < Grape::JSONAPI::API
+end
+
+class Cars < Grape::JSONAPI::API
+end
+
+class Boats < Grape::JSONAPI::API
+end
+
+class Books < Grape::JSONAPI::API
+end
+
+### CONTROLLERS
+module Api
+  module V1
+    class Authors < Grape::JSONAPI::API
+    end
+
+    class People < Grape::JSONAPI::API
+    end
+
+    class Posts < Grape::JSONAPI::API
+    end
+
+    class Tags < Grape::JSONAPI::API
+    end
+
+    class IsoCurrencies < Grape::JSONAPI::API
+    end
+
+    class ExpenseEntries < Grape::JSONAPI::API
+    end
+
+    class Breeds < Grape::JSONAPI::API
+    end
+
+    class Planets < Grape::JSONAPI::API
+    end
+
+    class PlanetTypes < Grape::JSONAPI::API
+    end
+
+    class Moons < Grape::JSONAPI::API
+    end
+
+    class Craters < Grape::JSONAPI::API
+      def context
+        { current_user: $test_user }
+      end
+    end
+
+    class Likes < Grape::JSONAPI::API
+    end
+  end
+
+  module V2
+    class Authors < Grape::JSONAPI::API
+    end
+
+    class People < Grape::JSONAPI::API
+    end
+
+    class Posts < Grape::JSONAPI::API
+    end
+
+    class Preferences < Grape::JSONAPI::API
+    end
+
+    class Books < Grape::JSONAPI::API
+      def context
+        { current_user: $test_user }
+      end
+    end
+
+    class BookComments < Grape::JSONAPI::API
+      def context
+        { current_user: $test_user }
+      end
+    end
+  end
+
+  module V3
+    class Posts < Grape::JSONAPI::API
+    end
+  end
+
+  module V4
+    class Posts < Grape::JSONAPI::API
+    end
+
+    class ExpenseEntries < Grape::JSONAPI::API
+    end
+
+    class IsoCurrencies < Grape::JSONAPI::API
+    end
+
+    class Books < Grape::JSONAPI::API
+    end
+  end
+
+  module V5
+    class Authors < Grape::JSONAPI::API
+      def serialization_options
+        { foo: 'bar' }
+      end
+    end
+
+    class Posts < Grape::JSONAPI::API
+    end
+
+    class ExpenseEntries < Grape::JSONAPI::API
+    end
+
+    class IsoCurrencies < Grape::JSONAPI::API
+    end
+  end
+
+  module V6
+    class Posts < Grape::JSONAPI::API
+    end
+
+    class Sections < Grape::JSONAPI::API
+    end
+
+    class Customers < Grape::JSONAPI::API
+    end
+
+    class PurchaseOrders < Grape::JSONAPI::API
+      def context
+        { current_user: $test_user }
+      end
+    end
+
+    class LineItems < Grape::JSONAPI::API
+    end
+
+    class OrderFlags < Grape::JSONAPI::API
+    end
+  end
+
+  module V7
+    class Customers < Grape::JSONAPI::API
+    end
+
+    class PurchaseOrders < Grape::JSONAPI::API
+    end
+
+    class LineItems < Grape::JSONAPI::API
+    end
+
+    class OrderFlags < Grape::JSONAPI::API
+    end
+
+    class Categories < Grape::JSONAPI::API
+    end
+
+    class Clients < Grape::JSONAPI::API
+    end
+  end
+
+  module V8
+    class NumerosTelefone < Grape::JSONAPI::API
+    end
+  end
+end
+
+module Api
+  class Boxes < Grape::JSONAPI::API
   end
 end
 
