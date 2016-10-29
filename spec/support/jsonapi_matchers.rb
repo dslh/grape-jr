@@ -12,6 +12,13 @@ RSpec::Matchers.define :be_a_success do
   end
 end
 
+RSpec::Matchers.define :be_an_empty_success do
+  match do |response|
+    expect(response.status).to eql 204
+    expect(response.body).to eql('{}')
+  end
+end
+
 RSpec::Matchers.define :be_a_resource do
   match do |resource|
     JSON::Validator.validate!(

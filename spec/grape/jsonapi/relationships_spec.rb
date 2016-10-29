@@ -62,13 +62,13 @@ describe Grape::JSONAPI::Relationships do
       it 'is possible via PATCH' do
         patch "people/#{person.id}/relationships/preferences",
               data: nil
-        expect(last_response.status).to eql 204
+        expect(last_response).to be_an_empty_success
         expect(person.reload.preferences).to be_nil
       end
 
       it 'is possible via DELETE' do
         delete "people/#{person.id}/relationships/preferences"
-        expect(last_response.status).to eql 204
+        expect(last_response).to be_an_empty_success
         expect(person.reload.preferences).to be_nil
       end
     end
@@ -87,10 +87,7 @@ describe Grape::JSONAPI::Relationships do
       end
 
       it 'returns the relationship' do
-        expect(last_response).to be_a_success
-        expect(resposne_data).to be_a_resource
-        expect(response_data['id']).to eql(preferences.id.to_s)
-        expect(response_data).not_to include 'attributes'
+        expect(last_response).to be_an_empty_success
       end
     end
   end
