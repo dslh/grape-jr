@@ -31,6 +31,7 @@ module Grape
           route_param :id do
             get { process_request(:show) }
             patch { process_request(:update) }
+            delete { process_request(:destroy) }
 
             add_resource_relationships(options)
           end
