@@ -17,15 +17,14 @@ JSONAPI.configure do |config|
   config.json_key_format = :dasherized_key
 end
 
-require_relative 'support/fixture_helpers'
 require_relative 'support/jsonapi_helpers'
 require_relative 'support/jsonapi_matchers'
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods
-  config.include FixtureHelpers
   config.include JsonapiHelpers
   config.use_transactional_fixtures = true
+  config.fixture_path = File.expand_path('../fixtures', __FILE__)
 end
 
 Rails.env = 'test'

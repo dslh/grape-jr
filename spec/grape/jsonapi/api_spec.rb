@@ -8,7 +8,7 @@ describe Grape::JSONAPI::API do
   end
 
   describe 'GET' do
-    before { use_fixtures('people') }
+    fixtures :people
 
     it 'returns an entity listing' do
       get 'people'

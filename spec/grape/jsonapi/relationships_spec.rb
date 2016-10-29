@@ -16,11 +16,7 @@ describe Grape::JSONAPI::Relationships do
     end
   end
 
-  before do
-    use_fixtures(*%w(
-      people comments posts vehicles preferences author_details tags sections books
-    ))
-  end
+  fixtures :people, :comments, :posts, :vehicles, :preferences, :author_details, :tags, :sections, :books
 
   describe 'related resource collections' do
     let(:person) { Person.find(1) }
