@@ -1,2 +1,7 @@
 test_db
 test_db-journal
+
+.ruby-version
+.ruby-gemset
+
+log/
