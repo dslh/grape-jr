@@ -16,7 +16,7 @@ describe Grape::JSONAPI::Relationships do
     end
   end
 
-  fixtures :people, :comments, :posts, :vehicles, :preferences, :author_details, :tags, :sections, :books
+  fixtures :people, :comments, :preferences
 
   describe 'related resource collections' do
     let(:person) { Person.find(1) }

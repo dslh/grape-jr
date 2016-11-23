@@ -17,6 +17,8 @@ module Grape
           content_type :json, ::JSONAPI::MEDIA_TYPE
           default_format :json
 
+          handle_errors
+
           resource name.demodulize.underscore do
             helpers { include Helpers }
 
@@ -34,6 +36,15 @@ module Grape
             delete { process_request(:destroy) }
 
             add_resource_relationships(options)
+          end
+        end
+
+        def handle_errors
+          rescue_from Grape::Exceptions::Base do |error|
+            render_errors [::JSONAPI::Error.new(
+              code: error.status,
+              title: error.message
+            )]
           end
         end
       end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module JsonapiHelpers
   def jsonapi_response
-    @last_response ||= JSON.parse last_response.body
+    @jsonapi_response ||= JSON.parse last_response.body
   end
 
   def response_data
