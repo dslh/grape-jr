@@ -10,7 +10,7 @@ module Grape
       include Resources
 
       def controller_class
-        options[:for]
+        env['api.endpoint'].options[:for]
       end
 
       def parser_params

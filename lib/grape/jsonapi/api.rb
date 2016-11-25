@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require_relative 'relationships'
+require_relative 'error_renderer'
 
 module Grape
   module JSONAPI
@@ -41,10 +42,13 @@ module Grape
 
         def handle_errors
           rescue_from Grape::Exceptions::Base do |error|
-            render_errors [::JSONAPI::Error.new(
-              code: error.status,
-              title: error.message
-            )]
+            ErrorRenderer.new(env).render(
+              ::JSONAPI::Error.new(
+                code: error.status.to_s,
+                status: Rack::Utils::SYMBOL_TO_STATUS_CODE.key(error.status),
+                title: error.message
+              )
+            )
           end
         end
       end

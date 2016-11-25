@@ -3,6 +3,8 @@ module Grape
   module JSONAPI
     # A collection of internal methods used for rendering responses.
     module Rendering
+      include Resources
+
       def render_errors(errors)
         operation_results = ::JSONAPI::OperationResults.new
         result = ::JSONAPI::ErrorsOperationResult.new(
@@ -74,7 +76,11 @@ module Grape
       end
 
       def base_url
-        "http#{'s' if request.ssl?}://#{request.host_with_port}"
+        "http#{'s' if base_request.ssl?}://#{base_request.host_with_port}"
+      end
+
+      def base_request
+        env['api.endpoint'].request
       end
     end
   end
