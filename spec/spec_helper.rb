@@ -19,6 +19,7 @@ end
 
 require_relative 'support/jsonapi_helpers'
 require_relative 'support/jsonapi_matchers'
+require_relative 'support/matchers'
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods

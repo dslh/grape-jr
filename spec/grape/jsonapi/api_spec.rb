@@ -15,6 +15,72 @@ describe Grape::JSONAPI::API do
       expect(response_data).not_to be_empty
       expect(response_data.count).to eql(Person.count)
     end
+
+    describe 'pagination' do
+      before do
+        # If the number of Person records changes, these tests may
+        # need to be rewritten.
+        expect(Person.count).to eql(6)
+      end
+
+      context 'in `paged` mode' do
+        before { PersonResource.paginator :paged }
+        after { PersonResource.paginator :none }
+
+        it 'limits the number of resources that are returned' do
+          get 'people?page[size]=3'
+          expect(last_response).to be_a_success
+          expect(response_data.count).to eql(3)
+
+          expect(response_links).to include 'first'
+          expect(response_links).not_to include 'prev'
+          expect(response_links).to include 'last'
+          expect(response_links).to include 'next'
+          expect(response_links['next']).to eql(response_links['last'])
+          expect(response_links['next']).to include_param 'page[number]=2'
+
+          ids = response_data.map { |resource| resource['id'] }
+
+          get link_path(response_links['next'])
+          expect(response_links).to include 'prev'
+          expect(response_links).not_to include 'next'
+          expect(response_links['prev']).to eql(response_links['first'])
+
+          expect(response_data.count).to eql(3)
+          next_ids = response_data.map { |resource| resource['id'] }
+          expect((ids + next_ids).uniq.count).to eql(Person.count)
+        end
+      end
+
+      context 'in `offset` mode' do
+        before { PersonResource.paginator :offset }
+        after { PersonResource.paginator :none }
+
+        it 'limits the number of resources that are returned' do
+          get 'people?page[limit]=3'
+          expect(last_response).to be_a_success
+          expect(response_data.count).to eql(3)
+
+          expect(response_links).to include 'first'
+          expect(response_links).to include 'last'
+          expect(response_links).to include 'next'
+          expect(response_links).not_to include 'prev'
+          expect(response_links['next']).to eql(response_links['last'])
+          expect(response_links['next']).to include_param 'page[offset]=3'
+
+          ids = response_data.map { |resource| resource['id'] }
+
+          get link_path(response_links['next'])
+          expect(response_links).to include 'prev'
+          expect(response_links).not_to include 'next'
+          expect(response_links['prev']).to eql(response_links['first'])
+
+          expect(response_data.count).to eql(3)
+          next_ids = response_data.map { |resource| resource['id'] }
+          expect((ids + next_ids).uniq.count).to eql(Person.count)
+        end
+      end
+    end
   end
 
   describe 'POST' do
