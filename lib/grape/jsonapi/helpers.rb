@@ -29,7 +29,7 @@ module Grape
       end
 
       def process_request(action, options = {})
-        @json_request = json_request_for(action, options)
+        @json_request = json_request_for(action.to_sym, options)
 
         if @json_request.errors.empty?
           results = operation_dispatcher.process(@json_request.operations)

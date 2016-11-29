@@ -35,13 +35,9 @@ module Grape
           define_related_resource_helpers(relationship)
 
           if to_many?(relationship)
-            get do
-              process_request(:get_related_resources, related_resource_params)
-            end
+            get { process_request(:get_related_resources, related_params) }
           else
-            get do
-              process_request(:get_related_resource, related_resource_params)
-            end
+            get { process_request(:get_related_resource, related_params) }
           end
         end
       end
@@ -64,7 +60,7 @@ module Grape
         define_shared_helpers(relationship)
 
         helpers do
-          define_method(:related_resource_params) do
+          define_method(:related_params) do
             shared_resource_params.merge(
               controller: related_controller_name(related_resource),
               source: controller_name
@@ -78,13 +74,11 @@ module Grape
 
         helpers do
           define_method(:relationship_params) do
-            shared_resource_params.merge(
-              controller: controller_name
-            )
+            shared_resource_params.merge(controller: controller_name)
           end
 
           define_method(:process_relationship_request) do |action|
-            process_request("#{action}_relationship".to_sym, relationship_params)
+            process_request("#{action}_relationship", relationship_params)
           end
         end
       end
