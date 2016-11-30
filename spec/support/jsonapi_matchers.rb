@@ -19,18 +19,19 @@ RSpec::Matchers.define :be_an_empty_success do
   end
 end
 
-RSpec::Matchers.define :be_a_failure do |code = 400|
+RSpec::Matchers.define :be_a_failure do |status = 400|
   match do |response|
-    expect(response.status).to eql(code)
+    expect(response.status).to eql(status)
+    body = JSON.parse(response.body)
+    expect(body['errors']).to include a_hash_including('code' => @code) if @code
+
     JSON::Validator.validate!(
-      JSONAPI_SCHEMA, response.body, fragment: '#/definitions/failure'
+      JSONAPI_SCHEMA, body, fragment: '#/definitions/failure'
     )
   end
-end
 
-RSpec::Matchers.define :contain_error do |code|
-  match do |response|
-    expect(response['errors']).to include a_hash_including('code' => code)
+  chain :due_to do |error_code|
+    @code = error_code
   end
 end
 

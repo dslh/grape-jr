@@ -81,8 +81,9 @@ describe Grape::JSONAPI::API do
 
       it 'allows declared filters only' do
         get 'posts?filter[body]=AAAA'
-        expect(last_response).to be_a_failure
-        expect(jsonapi_response).to contain_error(JSONAPI::FILTER_NOT_ALLOWED)
+        expect(last_response).to(
+          be_a_failure.due_to(JSONAPI::FILTER_NOT_ALLOWED)
+        )
       end
 
       it 'accepts multiple values' do
@@ -97,8 +98,9 @@ describe Grape::JSONAPI::API do
 
       it 'may validate the filter value' do
         get 'people?filter[name]=ab'
-        expect(last_response).to be_a_failure
-        expect(jsonapi_response).to contain_error(JSONAPI::INVALID_FILTER_VALUE)
+        expect(last_response).to(
+          be_a_failure.due_to(JSONAPI::INVALID_FILTER_VALUE)
+        )
       end
     end
 
@@ -120,14 +122,16 @@ describe Grape::JSONAPI::API do
 
       it 'validates sort criteria' do
         get 'people?sort=foobar'
-        expect(last_response).to be_a_failure
-        expect(jsonapi_response).to contain_error JSONAPI::INVALID_SORT_CRITERIA
+        expect(last_response).to(
+          be_a_failure.due_to(JSONAPI::INVALID_SORT_CRITERIA)
+        )
       end
 
       it 'respects sortable_fields list' do
         get 'posts?sort=id'
-        expect(last_response).to be_a_failure
-        expect(jsonapi_response).to contain_error JSONAPI::INVALID_SORT_CRITERIA
+        expect(last_response).to(
+          be_a_failure.due_to(JSONAPI::INVALID_SORT_CRITERIA)
+        )
       end
     end
 
@@ -212,8 +216,7 @@ describe Grape::JSONAPI::API do
           'date-joined' => Time.now.iso8601
         }
       }
-      expect(last_response).to be_a_failure
-      expect(jsonapi_response).to contain_error(JSONAPI::INVALID_RESOURCE)
+      expect(last_response).to be_a_failure.due_to(JSONAPI::INVALID_RESOURCE)
     end
 
     it 'validates attribute names' do
@@ -225,8 +228,7 @@ describe Grape::JSONAPI::API do
           'date-joined' => Time.now.iso8601
         }
       }
-      expect(last_response).to be_a_failure
-      expect(jsonapi_response).to contain_error(JSONAPI::PARAM_NOT_ALLOWED)
+      expect(last_response).to be_a_failure.due_to(JSONAPI::PARAM_NOT_ALLOWED)
     end
 
     it 'validates attribute values' do
@@ -238,8 +240,9 @@ describe Grape::JSONAPI::API do
           'date-joined' => 'the first rising of the blood moon'
         }
       }
-      expect(last_response).to be_a_failure(422)
-      expect(jsonapi_response).to contain_error(JSONAPI::VALIDATION_ERROR)
+      expect(last_response).to(
+        be_a_failure(422).due_to(JSONAPI::VALIDATION_ERROR)
+      )
     end
   end
 
@@ -268,7 +271,7 @@ describe Grape::JSONAPI::API do
   describe 'GET /:id' do
     it 'returns a singular resource' do
       get 'people/1'
-      person = Person.find('1')
+      person = Person.find(1)
       expect(last_response).to be_a_success
       expect(response_data).to be_a_resource.with_id(1)
 
@@ -294,14 +297,96 @@ describe Grape::JSONAPI::API do
   end
 
   describe 'PATCH /:id' do
-    pending
+    let(:person) { Person.find(1) }
+
+    it 'updates the existing entity' do
+      patch 'people/1', data: {
+        type: 'people',
+        id: '1',
+        attributes: {
+          name: 'Joseph Author',
+          email: 'joseph@zyx.fake'
+        }
+      }
+
+      expect(last_response).to be_a_success
+      expect(response_data).to be_a_resource.with_id('1')
+      expect(person.name).to eql('Joseph Author')
+      expect(person.email).to eql('joseph@zyx.fake')
+    end
+
+    it 'checks the payload type' do
+      patch 'people/1', data: {
+        type: 'posts',
+        id: '1',
+        attributes: { name: 'Posty McPosterson' }
+      }
+
+      expect(last_response).to be_a_failure.due_to(JSONAPI::INVALID_RESOURCE)
+
+      patch 'people/1', data: {
+        id: '1',
+        attributes: { name: 'The Void' }
+      }
+
+      expect(last_response).to be_a_failure.due_to(JSONAPI::PARAM_MISSING)
+    end
+
+    it 'checks the payload ID' do
+      patch 'people/1', data: {
+        type: 'people',
+        attributes: { name: 'No IDea' }
+      }
+
+      expect(last_response).to be_a_failure.due_to(JSONAPI::KEY_ORDER_MISMATCH)
+
+      patch 'people/1', data: {
+        type: 'people',
+        id: '2',
+        attributes: { name: 'McLovin' }
+      }
+
+      expect(last_response).to(
+        be_a_failure.due_to(JSONAPI::KEY_NOT_INCLUDED_IN_URL)
+      )
+    end
+
+    it 'validates the given attributes' do
+      patch 'people/1', data: {
+        type: 'people',
+        id: '1',
+        attributes: { foo: 'bar' }
+      }
+
+      expect(last_response).to be_a_failure.due_to(JSONAPI::PARAM_NOT_ALLOWED)
+    end
+
+    it 'allows relationships to be set' do
+      patch 'people/1', data: {
+        type: 'people',
+        id: '1',
+        relationships: {
+          posts: {
+            data: [
+              { type: 'posts', id: '2' },
+              { type: 'posts', id: '3' },
+              { type: 'posts', id: '11' }
+            ]
+          }
+        }
+      }
+
+      expect(last_response).to be_a_success
+      expect(Post.find(3).author_id).to eql(1)
+      expect(Post.find(1).author_id).to be_nil
+    end
   end
 
   describe 'DELETE /:id' do
     it 'deletes the specified resource' do
-      expect { Person.find('1') }.not_to raise_error
+      expect { Person.find(1) }.not_to raise_error
       delete 'people/1'
-      expect { Person.find('1') }.to raise_error ActiveRecord::RecordNotFound
+      expect { Person.find(1) }.to raise_error ActiveRecord::RecordNotFound
     end
   end
 end
