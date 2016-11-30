@@ -50,3 +50,45 @@ RSpec::Matchers.define :be_a_resource_collection do
     end
   end
 end
+
+# Assert that a resource collection contains exactly
+# the records with the given set of ids.
+RSpec::Matchers.define :match_records do |expected_ids|
+  match do |response_data|
+    expect(ids(response_data)).to eql(Array.wrap(expected_ids).map(&:to_s).sort)
+
+    response_data.each { |r| expect(r['type']).to eql(@type) } if @type
+
+    true
+  end
+
+  def ids(resources)
+    resources.map { |resource| resource['id'] }.sort
+  end
+
+  failure_message do |response_data|
+    "expected resources #{expected_ids}, got #{ids(response_data)}"
+  end
+
+  chain :of_type do |type|
+    @type = type
+  end
+end
+
+# Assert that a resource collection contains at least
+# the records with the given set of ids.
+RSpec::Matchers.define :include_records do |ids|
+  match do |response_data|
+    ids.map!(&:to_s)
+    response_data.each do |resource|
+      expect(ids).to include resource['id']
+      expect(resource['type']).to eql(@type) if @type
+    end
+
+    true
+  end
+
+  chain :of_type do |type|
+    @type = type
+  end
+end
