@@ -13,6 +13,10 @@ module JsonapiHelpers
     jsonapi_response['data']
   end
 
+  def included_data
+    jsonapi_response['included']
+  end
+
   def response_links
     jsonapi_response['links']
   end

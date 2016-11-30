@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe Grape::JSONAPI::API do
-  fixtures :people, :posts
+  fixtures :people, :posts, :sections
 
   def app
     Class.new(Grape::API) do
@@ -101,6 +101,75 @@ describe Grape::JSONAPI::API do
         expect(jsonapi_response).to contain_error(JSONAPI::INVALID_FILTER_VALUE)
       end
     end
+
+    describe 'sorting' do
+      it 'sorts the returned records' do
+        get 'people?sort=id'
+        expect(response_data).to match_records(0..5).in_that_order
+
+        get 'people?sort=-id'
+        expect(response_data).to match_records(5.downto(0)).in_that_order
+      end
+
+      it 'sorts by multiple fields' do
+        get 'posts?sort=body,-title'
+        expect(response_data).to match_records(
+          [14, 1, 10, 3, 12, 7, 4, 9, 8, 6, 5, 13, 15, 16, 17, 2, 11]
+        ).in_that_order
+      end
+
+      it 'validates sort criteria' do
+        get 'people?sort=foobar'
+        expect(last_response).to be_a_failure
+        expect(jsonapi_response).to contain_error(JSONAPI::INVALID_SORT_CRITERIA)
+      end
+
+      it 'respects sortable_fields list' do
+        get 'posts?sort=id'
+        expect(last_response).to be_a_failure
+        expect(jsonapi_response).to contain_error(JSONAPI::INVALID_SORT_CRITERIA)
+      end
+    end
+
+    describe 'including related resources' do
+      it 'works with to-one relationships' do
+        get 'posts?include=author'
+        expect(last_response).to be_a_success
+        expect(included_data).to match_records([1,3,4]).of_type('people')
+      end
+
+      it 'works with to-many relationships' do
+        get 'people?include=posts&filter[id]=1'
+        expect(last_response).to be_a_success
+        expect(included_data).to match_records([1,2,11]).of_type('posts')
+      end
+
+      it 'allows secondary resource inclusion' do
+        get 'people?include=posts.section&filter[id]=1'
+        expect(last_response).to be_a_success
+        expect(included_data).to match_records([1,2,11]).of_type('posts')
+        expect(included_data).to match_records(2).of_type('sections')
+      end
+    end
+
+    describe 'sparse fieldsets' do
+      it 'only includes specified attributes' do
+        get 'people?fields[people]=name,date-joined'
+        response_data.each do |resource|
+          expect(resource['attributes']).to include 'name'
+          expect(resource['attributes']).to include 'date-joined'
+          expect(resource['attributes']).not_to include 'email'
+        end
+      end
+
+      it 'applies to included resources' do
+        get 'people?include=posts&fields[posts]=title'
+        included_data.each do |resource|
+          expect(resource['attributes']).to include 'title'
+          expect(resource['attributes']).not_to include 'body'
+        end
+      end
+    end
   end
 
   describe 'POST' do
@@ -185,6 +254,54 @@ describe Grape::JSONAPI::API do
       }
       expect(last_response).to be_a_failure(405)
       expect(Person.find(1).name).to eql 'Joe Author'
+    end
+  end
+
+  describe 'DELETE' do
+    it 'is not allowed' do
+      delete 'people', data: { type: 'people', id: '1' }
+      expect(last_response).to be_a_failure(405)
+      expect(Person.find(1)).not_to be_nil
+    end
+  end
+
+  describe 'GET /:id' do
+    it 'returns a singular resource' do
+      get 'people/1'
+      person = Person.find('1')
+      expect(last_response).to be_a_success
+      expect(response_data).to be_a_resource.with_id(1)
+
+      attributes = response_data['attributes']
+      expect(attributes['name']).to eql(person.name)
+      expect(attributes['email']).to eql(person.email)
+      date_joined = DateTime.parse(attributes['date-joined']).utc
+      expect(date_joined).to eql(person.date_joined)
+    end
+
+    it 'allows `include` parameter' do
+      get 'people/1?include=posts'
+      expect(included_data).to match_records([1, 2, 11]).of_type('posts')
+    end
+
+    it 'allows sparse fieldsets' do
+      get 'people/1?include=posts&fields[people]=name&fields[posts]=title'
+      expect(response_data['attributes'].keys).to eql(['name'])
+      included_data.each do |resource|
+        expect(resource['attributes'].keys).to eql(['title'])
+      end
+    end
+  end
+
+  describe 'PATCH /:id' do
+    pending
+  end
+
+  describe 'DELETE /:id' do
+    it 'deletes the specified resource' do
+      expect { Person.find('1') }.not_to raise_error
+      delete 'people/1'
+      expect { Person.find('1') }.to raise_error ActiveRecord::RecordNotFound
     end
   end
 end
