@@ -6,13 +6,7 @@ describe Grape::JSONAPI::Relationships do
     Class.new(Grape::API) do
       mount People
       mount Comments
-      mount Posts
-      mount Vehicles
       mount Preferences
-      mount Authors
-      mount Tags
-      mount Sections
-      mount Books
     end
   end
 

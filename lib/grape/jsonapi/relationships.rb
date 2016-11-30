@@ -90,13 +90,18 @@ module Grape
           define_method(:relationship) { relationship }
           define_method(:related_resource) { related_resource }
 
-          define_method(:shared_resource_params) do
-            {
-              "#{resource_class._type.to_s.singularize}_id" => params[:id],
-              relationship: relationship.name
-            }
-          end
+          define_method(
+            :shared_resource_params,
+            Relationships.instance_method(:shared_resource_params)
+          )
         end
+      end
+
+      def shared_resource_params
+        {
+          "#{resource_class._type.to_s.singularize}_id" => params[:id],
+          relationship: relationship.name
+        }
       end
 
       def to_many?(relationship)

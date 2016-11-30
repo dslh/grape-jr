@@ -17,7 +17,7 @@ module Grape
         Rack::Response.new(
           [rendered_content.to_json],
           @status,
-          { 'Content-Type' => ::JSONAPI::MEDIA_TYPE }
+          'Content-Type' => ::JSONAPI::MEDIA_TYPE
         ).finish
       end
 

@@ -121,13 +121,13 @@ describe Grape::JSONAPI::API do
       it 'validates sort criteria' do
         get 'people?sort=foobar'
         expect(last_response).to be_a_failure
-        expect(jsonapi_response).to contain_error(JSONAPI::INVALID_SORT_CRITERIA)
+        expect(jsonapi_response).to contain_error JSONAPI::INVALID_SORT_CRITERIA
       end
 
       it 'respects sortable_fields list' do
         get 'posts?sort=id'
         expect(last_response).to be_a_failure
-        expect(jsonapi_response).to contain_error(JSONAPI::INVALID_SORT_CRITERIA)
+        expect(jsonapi_response).to contain_error JSONAPI::INVALID_SORT_CRITERIA
       end
     end
 
@@ -135,19 +135,19 @@ describe Grape::JSONAPI::API do
       it 'works with to-one relationships' do
         get 'posts?include=author'
         expect(last_response).to be_a_success
-        expect(included_data).to match_records([1,3,4]).of_type('people')
+        expect(included_data).to match_records([1, 3, 4]).of_type('people')
       end
 
       it 'works with to-many relationships' do
         get 'people?include=posts&filter[id]=1'
         expect(last_response).to be_a_success
-        expect(included_data).to match_records([1,2,11]).of_type('posts')
+        expect(included_data).to match_records([1, 2, 11]).of_type('posts')
       end
 
       it 'allows secondary resource inclusion' do
         get 'people?include=posts.section&filter[id]=1'
         expect(last_response).to be_a_success
-        expect(included_data).to match_records([1,2,11]).of_type('posts')
+        expect(included_data).to match_records([1, 2, 11]).of_type('posts')
         expect(included_data).to match_records(2).of_type('sections')
       end
     end
