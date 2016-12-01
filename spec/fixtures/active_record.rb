@@ -1123,7 +1123,6 @@ module Api
       filters :writer
     end
 
-    class AuthorResource < AuthorResource; end
     class BookResource < BookResource; end
     class PersonResource < PersonResource; end
     class CommentResource < CommentResource; end
@@ -1150,7 +1149,6 @@ module Api
     class PreferencesResource < PreferencesResource; end
     class PersonResource < PersonResource; end
     class PostResource < PostResource; end
-    class AuthorResource < AuthorResource; end
     class CommentResource < CommentResource; end
     class VehicleResource < VehicleResource; end
     class HairCutResource < HairCutResource; end
@@ -1665,9 +1663,6 @@ end
 ### CONTROLLERS
 module Api
   module V1
-    class Authors < Grape::JSONAPI::API
-    end
-
     class People < Grape::JSONAPI::API
     end
 
@@ -1706,9 +1701,6 @@ module Api
   end
 
   module V2
-    class Authors < Grape::JSONAPI::API
-    end
-
     class People < Grape::JSONAPI::API
     end
 
