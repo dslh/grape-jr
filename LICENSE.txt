@@ -1,4 +1,4 @@
-Copyright (c) 2013 GoHiring GmbH
+Copyright (c) 2016 GoHiring GmbH
 
 MIT License
 
