@@ -6,5 +6,9 @@ class IsoUtcTimestampValueFormatter < JSONAPI::ValueFormatter
     def format(raw_value)
       raw_value.utc.iso8601 if raw_value
     end
+
+    def unformat(formatted)
+      DateTime.iso8601 formatted
+    end
   end
 end
