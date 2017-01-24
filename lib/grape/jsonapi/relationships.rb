@@ -47,11 +47,11 @@ module Grape
           define_relationship_helpers(relationship)
 
           get { process_relationship_request(:show) }
-          patch { process_relationship_request(:update) }
-          delete { process_relationship_request(:destroy) }
 
-          if to_many? relationship
-            post { process_relationship_request(:create) }
+          if mutable_relationship? relationship
+            define_relationship_mutators(relationship)
+          else
+            forbid_relationship_mutation
           end
         end
       end
@@ -67,6 +67,25 @@ module Grape
             )
           end
         end
+      end
+
+      def mutable_relationship?(relationship)
+        resource_class.mutable? &&
+          relationship.resource_klass.mutable? &&
+          !relationship.options[:immutable]
+      end
+
+      def define_relationship_mutators(relationship)
+        patch { process_relationship_request(:update) }
+        delete { process_relationship_request(:destroy) }
+
+        post { process_relationship_request(:create) } if to_many? relationship
+      end
+
+      def forbid_relationship_mutation
+        patch { forbidden_operation }
+        delete { forbidden_operation }
+        post { forbidden_operation }
       end
 
       def define_relationship_helpers(relationship)

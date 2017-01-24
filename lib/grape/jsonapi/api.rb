@@ -20,21 +20,25 @@ module Grape
 
           handle_errors
 
+          declare_base_route
+        end
+
+        def declare_base_route
           resource name.demodulize.underscore do
             helpers { include Helpers }
 
             get { process_request(:index) }
-            post { process_request(:create) }
+            post { process_request(:create) } if resource_class.mutable?
 
-            id_route
+            declare_id_route
           end
         end
 
-        def id_route
+        def declare_id_route
           route_param :id do
             get { process_request(:show) }
-            patch { process_request(:update) }
-            delete { process_request(:destroy) }
+            patch { process_request(:update) } if resource_class.mutable?
+            delete { process_request(:destroy) } if resource_class.mutable?
 
             add_resource_relationships(options)
           end
