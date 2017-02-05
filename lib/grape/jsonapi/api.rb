@@ -28,7 +28,11 @@ module Grape
             helpers { include Helpers }
 
             get { process_request(:index) }
-            post { process_request(:create) } if resource_class.mutable?
+            if resource_class.mutable?
+              post { process_request(:create) }
+            else
+              post { forbidden_operation }
+            end
 
             declare_id_route
           end
@@ -37,10 +41,19 @@ module Grape
         def declare_id_route
           route_param :id do
             get { process_request(:show) }
-            patch { process_request(:update) } if resource_class.mutable?
-            delete { process_request(:destroy) } if resource_class.mutable?
+            declare_id_route_mutations
 
             add_resource_relationships(options)
+          end
+        end
+
+        def declare_id_route_mutations
+          if resource_class.mutable?
+            patch { process_request(:update) }
+            delete { process_request(:destroy) }
+          else
+            patch { forbidden_operation }
+            delete { forbidden_operation }
           end
         end
 
