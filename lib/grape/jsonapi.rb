@@ -13,5 +13,6 @@ end
 
 require_relative 'jsonapi/api'
 require_relative 'jsonapi/helpers'
+require_relative 'jsonapi/value_formatters/iso_date_value_formatter'
 require_relative 'jsonapi/value_formatters/iso_utc_timestamp_value_formatter'
 require_relative 'jsonapi/value_formatters/float_value_formatter'
