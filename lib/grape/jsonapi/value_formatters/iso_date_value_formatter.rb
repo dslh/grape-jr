@@ -5,11 +5,11 @@
 class IsoDateValueFormatter < JSONAPI::ValueFormatter
   class << self
     def format(raw_value)
-      raw_value.iso8601
+      raw_value.iso8601 if raw_value
     end
 
     def unformat(formatted)
-      Date.iso8601 formatted
+      Date.iso8601 formatted unless formatted.blank?
     end
   end
 end

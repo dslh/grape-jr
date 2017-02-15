@@ -8,7 +8,7 @@ class IsoUtcTimestampValueFormatter < JSONAPI::ValueFormatter
     end
 
     def unformat(formatted)
-      DateTime.iso8601 formatted
+      DateTime.iso8601 formatted unless formatted.blank?
     end
   end
 end
