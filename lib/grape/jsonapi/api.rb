@@ -24,7 +24,7 @@ module Grape
         end
 
         def declare_base_route
-          resource name.demodulize.underscore do
+          resource name.demodulize.underscore.dasherize do
             helpers { include Helpers }
 
             get { process_request(:index) }

@@ -31,7 +31,7 @@ module Grape
       private
 
       def declare_related_resource(name, relationship, _options)
-        resource name do
+        resource name.to_s.dasherize do
           define_related_resource_helpers(relationship)
 
           if to_many?(relationship)
@@ -43,7 +43,7 @@ module Grape
       end
 
       def declare_relationship_resource(name, relationship, _options)
-        resource name do
+        resource name.to_s.dasherize do
           define_relationship_helpers(relationship)
 
           get { process_relationship_request(:show) }
