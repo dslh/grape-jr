@@ -24,7 +24,6 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency gem
   end
 
-  %w(grape jsonapi-resources).each do |gem|
-    spec.add_runtime_dependency gem
-  end
+  spec.add_runtime_dependency 'grape'
+  spec.add_runtime_dependency 'jsonapi-resources', '0.8.1'
 end
