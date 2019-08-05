@@ -27,13 +27,11 @@ module Grape
       def create_response_document(operation_results)
         ::JSONAPI::ResponseDocument.new(
           operation_results,
-          document_request_options.merge(document_base_options).merge(
-            primary_resource_klass: resource_class,
-            key_formatter: ::JSONAPI.configuration.key_formatter,
-            route_formatter: ::JSONAPI.configuration.route_formatter,
-            resource_serializer_klass: ::JSONAPI::ResourceSerializer,
-            serialization_options: {}
-          )
+          operation_results.has_errors? ? nil : resource_serializer,
+          key_formatter: key_formatter,
+          base_meta: base_meta,
+          base_links: base_links,
+          request: @json_request
         )
       end
 
@@ -41,24 +39,6 @@ module Grape
         status_code = response_doc.status
         status_code = status_code.to_i if status_code.is_a? String
         status status_code
-      end
-
-      def document_request_options
-        return {} unless defined? @json_request
-
-        {
-          request: @json_request,
-          include_directives: @json_request.include_directives,
-          fields: @json_request.fields
-        }
-      end
-
-      def document_base_options
-        {
-          base_links: base_links,
-          base_meta: base_meta,
-          base_url: base_url
-        }
       end
 
       def base_links
@@ -81,6 +61,31 @@ module Grape
 
       def base_request
         env['api.endpoint'].request
+      end
+
+      def key_formatter
+        ::JSONAPI.configuration.key_formatter
+      end
+
+      def route_formatter
+        ::JSONAPI.configuration.route_formatter
+      end
+
+      def resource_serializer_klass
+        @resource_serializer_klass ||= ::JSONAPI::ResourceSerializer
+      end
+
+      def resource_serializer
+        @resource_serializer ||= resource_serializer_klass.new(
+          resource_class,
+          include_directives: @json_request ? @json_request.include_directives : nil,
+          fields: @json_request ? @json_request.fields : {},
+          base_url: base_url,
+          key_formatter: key_formatter,
+          route_formatter: route_formatter,
+          serialization_options: {},
+          controller: self
+        )
       end
     end
   end

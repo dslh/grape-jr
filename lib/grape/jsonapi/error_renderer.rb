@@ -18,7 +18,7 @@ module Grape
           [rendered_content.to_json],
           @status,
           'Content-Type' => ::JSONAPI::MEDIA_TYPE
-        ).finish
+        )
       end
 
       protected

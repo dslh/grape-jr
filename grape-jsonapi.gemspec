@@ -24,6 +24,6 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency gem
   end
 
-  spec.add_runtime_dependency 'grape'
-  spec.add_runtime_dependency 'jsonapi-resources', '0.8.1'
+  spec.add_runtime_dependency 'grape', '~> 1.2.0'
+  spec.add_runtime_dependency 'jsonapi-resources', '~> 0.9'
 end

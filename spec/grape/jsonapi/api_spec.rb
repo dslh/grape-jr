@@ -255,6 +255,7 @@ describe Grape::JSONAPI::API do
           name: 'Jane Author'
         }
       }
+
       expect(last_response).to be_a_failure(405)
       expect(Person.find(1).name).to eql 'Joe Author'
     end

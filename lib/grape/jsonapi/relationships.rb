@@ -18,6 +18,7 @@ module Grape
         return unless resource_relationships.any?
 
         resource_relationships.each do |name, relationship|
+          relationship._routed = true
           declare_related_resource(name, relationship, options)
         end
 

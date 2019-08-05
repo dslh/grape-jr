@@ -637,6 +637,10 @@ class PersonResource < BaseResource
     end
     values
   end
+
+  def self.creatable_fields(context)
+    super(context) + [:id]
+  end
 end
 
 class PersonWithEvenAndOddPostsResource < JSONAPI::Resource
