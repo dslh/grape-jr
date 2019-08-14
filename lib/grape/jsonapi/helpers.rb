@@ -23,7 +23,8 @@ module Grape
         )
         ::JSONAPI::RequestParser.new(
           action_parameters,
-          context: {},
+          # define a `context` method to pass extra data to resources
+          context: respond_to?(:context) ? send(:context) : {},
           server_error_callbacks: []
         )
       end
