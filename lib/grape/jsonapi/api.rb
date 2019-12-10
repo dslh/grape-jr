@@ -5,6 +5,19 @@ require_relative 'error_renderer'
 module Grape
   module JSONAPI
     # Uses the jsonapi-resources gem to provide a JSON-API compliant Grape::API.
+    #
+    # Note: The Grape's docs states to inherit +Grape::API+ instead of an internal
+    # +Grape::API::Instance+ class. Unfortunately, this approach doesn't work while
+    # generating routes.
+    #
+    # Example:
+    #
+    #     resource name.demodulize.underscore.dasherize do
+    #       # code here
+    #     end
+    #
+    # The code inside the block won't have access to +Grape::JSONAPI::API+ because of code
+    # evaluation which happens inside +Grape::API::Instance+.
     class API < ::Grape::API::Instance
       def self.inherited(subclass)
         super
@@ -14,6 +27,12 @@ module Grape
 
       class << self
         include Relationships
+
+        # Unfortunately, the base API class isn't given while inheriting +Grape::API::Instance+.
+        # So, this method was overridden to check the given base API class before calling methods on it.
+        def base_instance?
+          !base.nil? && self == base.base_instance
+        end
 
         def jsonapi_resource
           content_type :json, ::JSONAPI::MEDIA_TYPE

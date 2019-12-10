@@ -17,13 +17,13 @@ Gem::Specification.new do |spec|
                                 .reject { |f| f.match(%r{^spec/}) }
   spec.require_paths = ['lib']
 
-  %w(
+  %w[
     bundler otr-activerecord rake rspec rubocop pry-byebug simplecov sqlite3
     rspec-rails json-schema
-  ).each do |gem|
+  ].each do |gem|
     spec.add_development_dependency gem
   end
 
-  spec.add_runtime_dependency 'grape', '~> 1.2.0'
-  spec.add_runtime_dependency 'jsonapi-resources', '~> 0.9'
+  spec.add_runtime_dependency 'grape', '~> 1.2.5'
+  spec.add_runtime_dependency 'jsonapi-resources', '~> 0.9.10'
 end

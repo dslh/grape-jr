@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     grape-jsonapi (0.0.1)
-      grape (~> 1.2.0)
-      jsonapi-resources (~> 0.9)
+      grape (~> 1.2.5)
+      jsonapi-resources (~> 0.9.10)
 
 GEM
   remote: https://rubygems.org/
@@ -52,7 +52,7 @@ GEM
     docile (1.1.5)
     equalizer (0.0.11)
     erubis (2.7.0)
-    grape (1.2.4)
+    grape (1.2.5)
       activesupport
       builder
       mustermann-grape (~> 1.0.0)
