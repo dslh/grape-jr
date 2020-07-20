@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'bundler/setup'
 require 'simplecov'
 
@@ -25,7 +26,7 @@ RSpec.configure do |config|
   config.include Rack::Test::Methods
   config.include JsonapiHelpers
   config.use_transactional_fixtures = true
-  config.fixture_path = File.expand_path('../fixtures', __FILE__)
+  config.fixture_path = File.expand_path('fixtures', __dir__)
 end
 
 Rails.env = 'test'
@@ -39,7 +40,7 @@ class TestApp < Rails::Application
 end
 
 db_configurations =
-  YAML.load_file(File.expand_path('../config/database.yml', __FILE__))
+  YAML.load_file(File.expand_path('config/database.yml', __dir__))
 ActiveRecord::Base.establish_connection db_configurations['test']
 ActiveRecord::Base.configurations = db_configurations
 

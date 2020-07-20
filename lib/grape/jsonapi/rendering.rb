@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Grape
   module JSONAPI
     # A collection of internal methods used for rendering responses.
@@ -10,6 +11,7 @@ module Grape
         result = ::JSONAPI::ErrorsOperationResult.new(
           errors.first.status, errors
         )
+
         operation_results.add_result(result)
 
         render_results operation_results
@@ -19,7 +21,7 @@ module Grape
         response_doc = create_response_document(operation_results)
 
         response_status(response_doc)
-        response_doc.contents
+        response_doc.status == :no_content ? '' : response_doc.contents
       end
 
       private

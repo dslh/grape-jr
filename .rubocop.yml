@@ -1,5 +1,9 @@
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.6
 
 Style/SignalException:
   EnforcedStyle: semantic
+
+Metrics/BlockLength:
+  Enabled: false
+

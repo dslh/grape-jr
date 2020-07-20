@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module JsonapiHelpers
   def jsonapi_response
     if @last_response != last_response

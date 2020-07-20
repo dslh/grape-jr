@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class UpperCamelizedKeyFormatter < JSONAPI::KeyFormatter
   class << self
     def format(key)

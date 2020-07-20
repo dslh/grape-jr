@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'json-schema'
 
 JSONAPI_SCHEMA = File.read("#{File.dirname __FILE__}/jsonapi_schema.json")
@@ -15,7 +16,7 @@ end
 RSpec::Matchers.define :be_an_empty_success do
   match do |response|
     expect(response.status).to eql 204
-    expect(response.body).to eql('{}')
+    expect(response.body).to eql('')
   end
 end
 
