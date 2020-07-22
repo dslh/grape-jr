@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'cgi'
 
 RSpec::Matchers.define :include_param do |param|

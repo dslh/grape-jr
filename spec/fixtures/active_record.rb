@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # rubocop:disable Style/GlobalVars
 require 'jsonapi-resources'
 
@@ -61,12 +62,12 @@ ActiveRecord::Schema.define do
   create_table :posts_tags, force: true do |t|
     t.references :post, :tag, index: true
   end
-  add_index :posts_tags, [:post_id, :tag_id], unique: true
+  add_index :posts_tags, %i[post_id tag_id], unique: true
 
   create_table :special_post_tags, force: true do |t|
     t.references :post, :tag, index: true
   end
-  add_index :special_post_tags, [:post_id, :tag_id], unique: true
+  add_index :special_post_tags, %i[post_id tag_id], unique: true
 
   create_table :comments_tags, force: true do |t|
     t.references :comment, :tag, index: true
@@ -98,7 +99,7 @@ ActiveRecord::Schema.define do
   create_table :planets_tags, force: true do |t|
     t.references :planet, :tag, index: true
   end
-  add_index :planets_tags, [:planet_id, :tag_id], unique: true
+  add_index :planets_tags, %i[planet_id tag_id], unique: true
 
   create_table :planet_types, force: true do |t|
     t.string :name
@@ -188,7 +189,7 @@ ActiveRecord::Schema.define do
     t.references :purchase_order, :order_flag, index: true
   end
   add_index :purchase_orders_order_flags,
-            [:purchase_order_id, :order_flag_id],
+            %i[purchase_order_id order_flag_id],
             unique: true, name: 'po_flags_idx'
 
   create_table :line_items, force: true do |t|
@@ -414,6 +415,7 @@ class Planet < ActiveRecord::Base
   def check_not_pluto
     # Pluto can't be a planet, so cancel the save
     return unless name.casecmp('pluto').zero?
+
     # :nocov:
     throw(:abort) if Rails::VERSION::MAJOR >= 5
 
@@ -597,8 +599,8 @@ class Thing < ActiveRecord::Base
 end
 
 class RelatedThing < ActiveRecord::Base
-  belongs_to :from, class_name: Thing, foreign_key: :from_id
-  belongs_to :to, class_name: Thing, foreign_key: :to_id
+  belongs_to :from, class_name: 'Thing', foreign_key: :from_id
+  belongs_to :to, class_name: 'Thing', foreign_key: :to_id
 end
 
 module Api
@@ -631,9 +633,7 @@ class PersonResource < BaseResource
 
   def self.verify_name_filter(values, _context)
     values.each do |value|
-      if value.length < 3
-        fail JSONAPI::Exceptions::InvalidFilterValue.new(:name, value)
-      end
+      fail JSONAPI::Exceptions::InvalidFilterValue.new(:name, value) if value.length < 3
     end
     values
   end
@@ -807,11 +807,11 @@ class PostResource < JSONAPI::Resource
          }
 
   def self.updatable_fields(context)
-    super(context) - [:author, :subject]
+    super(context) - %i[author subject]
   end
 
   def self.creatable_fields(context)
-    super(context) - [:subject, :id]
+    super(context) - %i[subject id]
   end
 
   def self.sortable_fields(context)
@@ -821,9 +821,7 @@ class PostResource < JSONAPI::Resource
   def self.verify_key(key, context = nil)
     super(key)
 
-    unless find_by_key(key, context: context)
-      fail JSONAPI::Exceptions::RecordNotFound, key
-    end
+    fail JSONAPI::Exceptions::RecordNotFound, key unless find_by_key(key, context: context)
 
     key
   end
@@ -1198,9 +1196,7 @@ module Api
 
           records = _model_class
           # Hide the banned books from people who are not book admins
-          unless current_user&.book_admin
-            records = records.where(not_banned_books)
-          end
+          records = records.where(not_banned_books) unless current_user&.book_admin
           records
         end
 
@@ -1227,9 +1223,7 @@ module Api
         context = options[:context]
         current_user = context ? context[:current_user] : nil
 
-        if current_user&.book_admin
-          records.where(approved_comments(value[0] == 'true'))
-        end
+        records.where(approved_comments(value[0] == 'true')) if current_user&.book_admin
       }
 
       class << self
@@ -1516,6 +1510,7 @@ end
 class PostProcessor < JSONAPI::Processor
   def find
     fail Posts::SubSpecialError if $PostProcessorRaisesErrors
+
     # puts("In custom Operations Processor without Namespace")
     super
   end
@@ -1533,6 +1528,7 @@ module Api
     class CategoryProcessor < JSONAPI::Processor
       def show
         fail Posts::SubSpecialError if $PostProcessorRaisesErrors
+
         # puts("In custom Operations Processor without Namespace")
         super
       end
@@ -1586,12 +1582,12 @@ class Posts < Grape::JSONAPI::API
     head :forbidden
   end
 
-  def handle_exceptions(e)
-    case e
+  def handle_exceptions(error)
+    case error
     when Posts::SpecialError
-      fail e
+      fail error
     else
-      super(e)
+      super(error)
     end
   end
 
@@ -1823,3 +1819,4 @@ $breed_data.add(Breed.new(0, 'persian'))
 $breed_data.add(Breed.new(1, 'siamese'))
 $breed_data.add(Breed.new(2, 'sphinx'))
 $breed_data.add(Breed.new(3, 'to_delete'))
+# rubocop:enable Style/GlobalVars

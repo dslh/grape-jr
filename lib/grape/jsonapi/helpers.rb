@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'rendering'
 require_relative 'resources'
 
@@ -55,7 +56,7 @@ module Grape
       end
 
       def rollback_action
-        ->() { fail ActiveRecord::Rollback }
+        -> { fail ActiveRecord::Rollback }
       end
 
       def forbidden_operation

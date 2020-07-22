@@ -5,7 +5,7 @@
 class IsoDateValueFormatter < JSONAPI::ValueFormatter
   class << self
     def format(raw_value)
-      raw_value.iso8601 if raw_value
+      raw_value&.iso8601
     end
 
     def unformat(formatted)

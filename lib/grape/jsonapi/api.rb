@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'relationships'
 require_relative 'error_renderer'
 
@@ -31,6 +32,7 @@ module Grape
           resource_class._routed = true
         end
 
+        # rubocop:disable Metrics/AbcSize
         def declare_base_route
           resource name.demodulize.underscore.dasherize do
             helpers { include Helpers }
@@ -45,6 +47,7 @@ module Grape
             declare_id_route
           end
         end
+        # rubocop:enable Metrics/AbcSize
 
         def declare_id_route
           route_param :id do

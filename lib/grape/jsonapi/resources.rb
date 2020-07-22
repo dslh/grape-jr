@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Grape
   module JSONAPI
     # Methods for linking to the resource class for a controller.
