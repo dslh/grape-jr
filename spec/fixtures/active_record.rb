@@ -861,7 +861,7 @@ class BreedResource < JSONAPI::Resource
 
   def self.find(_filters, options = {})
     breeds = []
-    $breed_data.breeds.values.each do |breed|
+    $breed_data.breeds.each_value do |breed|
       breeds.push(BreedResource.new(breed, options[:context]))
     end
     breeds

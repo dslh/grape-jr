@@ -32,22 +32,24 @@ module Grape
           resource_class._routed = true
         end
 
-        # rubocop:disable Metrics/AbcSize
         def declare_base_route
           resource name.demodulize.underscore.dasherize do
             helpers { include Helpers }
 
             get { process_request(:index) }
-            if resource_class.mutable?
-              post { process_request(:create) }
-            else
-              post { forbidden_operation }
-            end
+            declare_create_route
 
             declare_id_route
           end
         end
-        # rubocop:enable Metrics/AbcSize
+
+        def declare_create_route
+          if resource_class.mutable?
+            post { process_request(:create) }
+          else
+            post { forbidden_operation }
+          end
+        end
 
         def declare_id_route
           route_param :id do
