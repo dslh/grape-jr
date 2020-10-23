@@ -16,6 +16,7 @@ Gem::Specification.new do |spec|
   spec.files = `git ls-files -z`.split("\x0")
                                 .reject { |f| f.match(%r{^spec/}) }
   spec.require_paths = ['lib']
+  spec.required_ruby_version = '>= 2.6.0'
 
   %w[
     bundler otr-activerecord rake rspec rubocop pry-byebug simplecov sqlite3
@@ -24,6 +25,6 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency gem
   end
 
-  spec.add_runtime_dependency 'grape', '~> 1.4.0'
+  spec.add_runtime_dependency 'grape', '>= 1.4.0'
   spec.add_runtime_dependency 'jsonapi-resources', '~> 0.9.11'
 end
