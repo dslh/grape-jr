@@ -37,9 +37,9 @@ module Grape
           define_related_resource_helpers(relationship)
 
           if to_many?(relationship)
-            get { process_request(:get_related_resources, related_params) }
+            get { process_request(:index_related_resources, related_params) }
           else
-            get { process_request(:get_related_resource, related_params) }
+            get { process_request(:show_related_resource, related_params) }
           end
         end
       end

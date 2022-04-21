@@ -6,44 +6,51 @@ module Grape
     module Rendering
       include Resources
 
+      attr_reader :response_document
+
       def render_errors(errors)
-        operation_results = ::JSONAPI::OperationResults.new
+        setup_response_document
+
         result = ::JSONAPI::ErrorsOperationResult.new(
           errors.first.status, errors
         )
 
-        operation_results.add_result(result)
+        response_document.add_result(result, nil)
 
-        render_results operation_results
+        render_results
       end
 
-      def render_results(operation_results)
-        response_doc = create_response_document(operation_results)
-
-        response_status(response_doc)
-        response_doc.status == :no_content ? '' : response_doc.contents
+      def render_results
+        response_status
+        response_document.status == 204 ? '' : response_document.contents
       end
 
       private
 
-      def create_response_document(operation_results)
+      def create_response_document
         ::JSONAPI::ResponseDocument.new(
-          operation_results,
-          operation_results.has_errors? ? nil : resource_serializer,
           key_formatter: key_formatter,
           base_meta: base_meta,
-          base_links: base_links,
-          request: @json_request
+          base_links: base_response_links,
+          request: respond_to?(:request) ? request : nil
         )
       end
 
-      def response_status(response_doc)
-        status_code = response_doc.status
+      def setup_response_document
+        @response_document = create_response_document
+      end
+
+      def response_status
+        status_code = response_document.status
         status_code = status_code.to_i if status_code.is_a? String
         status status_code
       end
 
       def base_links
+        {}
+      end
+
+      def base_response_links
         {}
       end
 

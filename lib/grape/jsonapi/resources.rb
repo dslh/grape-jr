@@ -10,7 +10,7 @@ module Grape
       end
 
       def resource_class
-        ::JSONAPI::Resource.resource_for controller_name
+        ::JSONAPI::Resource.resource_klass_for controller_name
       end
 
       def resource_name
@@ -26,7 +26,7 @@ module Grape
       end
 
       def related_resource_for(relationship)
-        ::JSONAPI::Resource.resource_for(
+        ::JSONAPI::Resource.resource_klass_for(
           "#{resource_module_name}/#{relationship.class_name}".underscore
         )
       end
