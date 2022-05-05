@@ -793,7 +793,7 @@ class PostResource < JSONAPI::Resource
            return values
          },
          apply: lambda { |records, value, _options|
-           records.where('id IN (?)', value)
+           records.where('posts.id IN (?)', value)
          }
 
   filter :search,
@@ -1148,6 +1148,7 @@ end
 
 module Api
   module V2
+    class AuthorResource < PreferencesResource; end
     class PreferencesResource < PreferencesResource; end
     class PersonResource < PersonResource; end
     class PostResource < PostResource; end
@@ -1257,6 +1258,7 @@ end
 
 module Api
   module V4
+    class AuthorResource < PreferencesResource; end
     class PostResource < PostResource; end
     class PersonResource < PersonResource; end
     class ExpenseEntryResource < ExpenseEntryResource; end

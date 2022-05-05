@@ -25,7 +25,7 @@ module Grape
           declare_base_route
 
           # Before generating links for resources while building a response, the jsonapi-resources
-          # gem verifies whether there are routes to them. If no, a warning intead of a link
+          # gem verifies whether there are routes to them. If no, a warning instead of a link
           # will be outputed. This gem doesn't use route helpers of the jsonapi-resources gem,
           # but it adds Grape routes, so a `_routed` flag must be added for every resource
           # which routed by Grape.
